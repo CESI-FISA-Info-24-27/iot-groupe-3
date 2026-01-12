@@ -1,0 +1,4 @@
+paho-mqtt
+bleak
+python-dotenv
+loguru

@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # ========================================
+  # 1. Broker MQTT (Eclipse Mosquitto)
+  # ========================================
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: ecoguard-mqtt
+    ports:
+      - "1883:1883"   # Port MQTT standard
+      - "9001:9001"   # Port WebSocket
+    volumes:
+      - ./embedded/mosquitto/config:/mosquitto/config
+      - ./embedded/mosquitto/data:/mosquitto/data
+      - ./embedded/mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - ecoguard-network
+
+  # ========================================
+  # 2. Backend API (Python FastAPI/Flask)
+  # ========================================
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecoguard-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_PATH=/app/data/ecoguard.db
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+    volumes:
+      - ./backend/sqlite:/app/data
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+    networks:
+      - ecoguard-network
+    # Décommenter pour le développement (hot-reload)
+    # volumes:
+    #   - ./backend:/app
+
+  # ========================================
+  # 3. Gateway BLE-MQTT Bridge
+  # ========================================
+  ble-bridge:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: ecoguard-gateway
+    # CRUCIAL : network_mode host pour accéder au Bluetooth du Raspberry Pi
+    network_mode: host
+    privileged: true
+    environment:
+      - MQTT_BROKER=${MQTT_BROKER:-localhost}
+      - MQTT_PORT=${MQTT_PORT:-1883}
+      - MQTT_TOPIC=${MQTT_TOPIC:-sensors/ble}
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+    # Décommenter pour le développement (hot-reload)
+    # volumes:
+    #   - ./gateway:/app
+
+  # ========================================
+  # 4. Frontend (Ionic)
+  # ========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ecoguard-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend-api
+    restart: unless-stopped
+    networks:
+      - ecoguard-network
+
+# ========================================
+# Réseaux
+# ========================================
+networks:
+  ecoguard-network:
+    driver: bridge
