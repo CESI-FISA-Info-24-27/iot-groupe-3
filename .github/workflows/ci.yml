@@ -124,7 +124,7 @@ jobs:
           docker compose down -v
 
   # ========================================
-  # Job 5 : Security Scan (Bonus)
+  # Job 5 : Security Scan
   # ========================================
   security-scan:
     name: Security Scan
