@@ -1,5 +1,14 @@
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  analyticsOutline,
+  ellipse,
+  gridOutline,
+  square,
+  triangle,
+  videocamOutline,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +16,15 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  constructor() {
+    // Custom icons to be used anywhere in the app
+    addIcons({
+      analyticsOutline,
+      triangle,
+      ellipse,
+      square,
+      gridOutline,
+      videocamOutline,
+    });
+  }
 }
