@@ -1,1 +1,27 @@
+@use "../../theme/variables" as *;
 
+ion-label {
+  font-size: medium;
+}
+
+ion-label.selected-hue {
+  @include blue-green-hue;
+}
+
+// Workaround to apply hue effect to ion-icon.
+ion-icon.selected-hue {
+  color: #24c7d3;
+  animation: icon-hue-shift 6s ease-in-out infinite;
+}
+
+@keyframes icon-hue-shift {
+  0% {
+    color: #24c7d3;
+  }
+  50% {
+    color: #6dd55d;
+  }
+  100% {
+    color: #24c7d3;
+  }
+}
