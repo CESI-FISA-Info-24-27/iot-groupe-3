@@ -53,12 +53,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
+      - name: Install CppCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck
+      
       - name: Run CppCheck
-        uses: dnicolson/cppcheck-action@v1.4.0
-        with:
-          source_dir: 'embedded'
-          enable: 'all'
-          inline_suppression: true
+        run: |
+          cppcheck --enable=all --inconclusive --xml --xml-version=2 embedded/ 2> cppcheck-report.xml || echo "⚠️ CppCheck warnings detected"
+          cppcheck --enable=all embedded/ || echo "⚠️ Code quality issues detected"
         continue-on-error: true
 
   # ========================================
