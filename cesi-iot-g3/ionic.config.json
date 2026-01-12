@@ -1,0 +1,7 @@
+{
+  "name": "cesi-iot-g3",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
