@@ -1,3 +1,24 @@
 <app-header />
 
-<ion-content> <p>Caméra</p></ion-content>
+<ion-content class="ion-padding">
+  <div class="camera-container">
+    @if(!streamLoaded()) {
+    <app-spinner message="Chargement de la caméra..." />
+    } @else {
+    <div class="section-title">Flux vidéo de la caméra</div>
+    }
+    <img
+      [src]="streamUrl"
+      alt="Camera Stream"
+      [hidden]="!streamLoaded()"
+      (load)="onStreamLoad()"
+      (error)="onStreamError()"
+    />
+    @if(streamLoaded()) {
+    <div class="light-motion-container">
+      <div class="motion-container">WIP</div>
+      <app-toggle-light [(lightState)]="lightState" />
+    </div>
+    }
+  </div>
+</ion-content>

@@ -19,7 +19,7 @@ $main-red: #ef4444;
   background-size: 300% 100%;
   background-clip: text;
   color: transparent;
-  animation: gradient-slide 6s ease-in-out infinite;
+  animation: gradient-slide 8s ease-in-out infinite;
 }
 
 @mixin orange-red-hue {
@@ -33,6 +33,14 @@ $main-red: #ef4444;
   background-clip: text;
   color: transparent;
   animation: gradient-slide 6s ease-in-out infinite;
+}
+
+@mixin red-hue {
+  background: linear-gradient(90deg, #{$main-red}, #c56161, #{$main-red});
+  background-size: 300% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-slide 5s ease-in-out infinite;
 }
 
 @keyframes gradient-slide {
