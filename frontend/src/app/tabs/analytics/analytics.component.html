@@ -1,6 +1,14 @@
 <app-header />
 
 <ion-content class="ion-padding">
+  <div class="graph-title-no-mt">Valeurs relevées</div>
+  <app-data-summary
+    [currentTemperature]="currentTemperature()"
+    [currentHumidity]="currentHumidity()"
+    [averageTemperature]="averageTemperature()"
+    [averageHumidity]="averageHumidity()"
+  ></app-data-summary>
+  <div class="graph-title">Température et humidité</div>
   <div class="chart-container">
     <canvas #temperatureChart></canvas>
   </div>

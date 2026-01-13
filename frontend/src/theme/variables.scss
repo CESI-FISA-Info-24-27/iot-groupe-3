@@ -2,6 +2,8 @@
 // https://ionicframework.com/docs/theming/
 $main-light-blue: #24c7d3;
 $main-light-green: #6dd55d;
+$main-orange: #f59e0b;
+$main-red: #ef4444;
 
 .main-button-color {
   --color-selected: #{$main-light-blue};
@@ -20,6 +22,19 @@ $main-light-green: #6dd55d;
   animation: gradient-slide 6s ease-in-out infinite;
 }
 
+@mixin orange-red-hue {
+  background: linear-gradient(
+    90deg,
+    #{$main-orange},
+    #{$main-red},
+    #{$main-orange}
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-slide 6s ease-in-out infinite;
+}
+
 @keyframes gradient-slide {
   0% {
     background-position: 0% 50%;
@@ -27,4 +42,8 @@ $main-light-green: #6dd55d;
   100% {
     background-position: 100% 50%;
   }
+}
+
+p {
+  margin: 0;
 }
