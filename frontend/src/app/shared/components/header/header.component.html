@@ -1,8 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <div class="toolbar">
-      <img src="../../assets/icon/logo.png" class="logo" />
-      <div class="title">CESIGuard</div>
+      <div class="logo-title">
+        <img src="../../assets/icon/logo.png" class="logo" />
+        <div class="title">CESIGuard</div>
+      </div>
+
+      <div class="status" (click)="toggleText()" [class]="status()">
+        <span class="status-dot" [class]="status()"></span>
+        @if(showText()) {
+        <p>{{ status() }}</p>
+        }
+      </div>
     </div>
   </ion-toolbar>
 </ion-header>

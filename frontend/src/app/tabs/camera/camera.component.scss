@@ -1,0 +1,40 @@
+@use "../.././../theme/variables.scss" as *;
+
+.camera-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  img {
+    border-radius: 8px;
+    padding: 1px;
+    background: linear-gradient(
+      90deg,
+      #{$main-light-blue},
+      #{$main-light-green},
+      #{$main-light-blue}
+    );
+    background-size: 300% 100%;
+    animation: gradient-slide 6s ease-in-out infinite;
+  }
+}
+
+.light-motion-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.motion-container {
+  border-radius: 8px;
+  width: 150px;
+  height: 100%;
+  background: rgba(50, 50, 50);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

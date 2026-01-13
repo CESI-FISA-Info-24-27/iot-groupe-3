@@ -105,7 +105,7 @@ export class AnalyticsComponent implements AfterViewInit {
         labels,
         datasets: [
           {
-            label: 'Temperature (°C)',
+            label: 'Température (°C)',
             data: temperatures,
             borderColor: tempGradient,
             tension: 0.3,
@@ -114,7 +114,7 @@ export class AnalyticsComponent implements AfterViewInit {
             yAxisID: 'y',
           },
           {
-            label: 'Humidity (%)',
+            label: 'Humidité (%)',
             data: humidity,
             borderColor: humidityGradient,
             tension: 0.3,
@@ -136,7 +136,7 @@ export class AnalyticsComponent implements AfterViewInit {
             position: 'left',
             title: {
               display: true,
-              text: 'Temperature (°C)',
+              text: 'Température (°C)',
             },
           },
           y1: {
@@ -146,7 +146,7 @@ export class AnalyticsComponent implements AfterViewInit {
             max: 100,
             title: {
               display: true,
-              text: 'Humidity (%)',
+              text: 'Humidité (%)',
             },
             grid: {
               drawOnChartArea: false,
@@ -172,8 +172,9 @@ export class AnalyticsComponent implements AfterViewInit {
     if (!this.chart) return;
 
     const maxLength = Math.max(temperatures.length, humidity.length);
-    const labels = Array.from({ length: maxLength }, () =>
-      new Date().toLocaleTimeString()
+    const labels = Array.from(
+      { length: maxLength },
+      (_, index) => `#${index + 1}`
     );
     this.chart.data.labels = labels;
     this.chart.data.datasets[0].data = temperatures;

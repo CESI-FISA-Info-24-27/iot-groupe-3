@@ -3,6 +3,7 @@
 .toolbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .logo {
@@ -15,4 +16,63 @@
   font-size: 24px;
   font-weight: bold;
   @include blue-green-hue;
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 20px;
+  cursor: pointer;
+  &.Online {
+    @include blue-green-hue;
+  }
+
+  &.Pending {
+    @include orange-red-hue;
+  }
+
+  &.Offline {
+    @include red-hue;
+  }
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+
+  &.Online {
+    background-color: #{$main-light-green};
+    box-shadow: 0 0 8px #{$main-light-green};
+  }
+
+  &.Offline {
+    background-color: #{$main-red};
+    box-shadow: 0 0 8px #{$main-red};
+  }
+
+  &.Pending {
+    background-color: #{$main-orange};
+    box-shadow: 0 0 8px #{$main-orange};
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
 }

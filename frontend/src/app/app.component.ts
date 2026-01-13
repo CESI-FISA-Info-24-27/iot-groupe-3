@@ -5,7 +5,9 @@ import {
   analyticsOutline,
   ellipse,
   gridOutline,
+  moon,
   square,
+  sunny,
   triangle,
   videocamOutline,
 } from 'ionicons/icons';
@@ -25,6 +27,8 @@ export class AppComponent {
       square,
       gridOutline,
       videocamOutline,
+      sunny,
+      moon,
     });
   }
 }
