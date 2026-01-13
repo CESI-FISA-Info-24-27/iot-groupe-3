@@ -1,13 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { IonHeader, IonToolbar } from '@ionic/angular/standalone';
 import { StatusService } from '../../services/status-service';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  imports: [IonHeader, IonToolbar, CommonModule],
+  imports: [IonHeader, IonToolbar],
 })
 export class HeaderComponent {
   statusService = inject(StatusService);
