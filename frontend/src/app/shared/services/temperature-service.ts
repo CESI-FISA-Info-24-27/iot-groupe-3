@@ -4,14 +4,15 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class TemperatureService {
-  temperatures = signal<number[]>([25]);
+  temperatureValues = signal<number[]>([25]);
 
   constructor() {
     setInterval(() => {
-      this.temperatures.update((t) =>
-        [...t, this.temperatures()[t.length - 1] + Math.random() * 4 - 2].slice(
-          -20
-        )
+      this.temperatureValues.update((t) =>
+        [
+          ...t,
+          this.temperatureValues()[t.length - 1] + Math.random() * 4 - 2,
+        ].slice(-20)
       );
     }, 5000);
   }

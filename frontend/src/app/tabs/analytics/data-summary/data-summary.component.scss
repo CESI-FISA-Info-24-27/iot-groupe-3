@@ -1,0 +1,45 @@
+@use "../../../../theme/variables.scss" as *;
+
+.data-summary {
+  width: 100%;
+  background-color: rgb(31, 31, 31);
+  border-radius: 10px;
+  margin-bottom: 10px;
+
+  .categories {
+    display: flex;
+
+    > div {
+      flex: 1;
+      text-align: center;
+
+      &:first-child {
+        border-right: 1px solid lightgray;
+      }
+    }
+  }
+}
+
+.category-title {
+  font-size: 20px;
+  margin: 20px 0 20px 0;
+}
+
+.temperature-value {
+  @include blue-green-hue;
+  font-weight: 600;
+}
+
+.humidity-value {
+  @include orange-red-hue;
+  font-weight: 600;
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  gap: 10px;
+}
