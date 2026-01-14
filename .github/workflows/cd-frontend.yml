@@ -73,6 +73,7 @@ jobs:
             docker run -d \
               --name ecoguard-frontend \
               --restart unless-stopped \
+              --security-opt apparmor=unconfined \
               -p 8082:80 \
               --network ecoguard-network \
               ecoguard-frontend:latest
