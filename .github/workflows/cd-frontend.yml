@@ -60,25 +60,25 @@ jobs:
             cd ~/ecoguard
             
             # Créer le réseau Docker s'il n'existe pas
-            sudo docker network create ecoguard-network || true
+            docker network create ecoguard-network || true
             
             # Arrêter et supprimer l'ancien conteneur
-            sudo docker stop ecoguard-frontend 2>/dev/null || true
-            sudo docker rm ecoguard-frontend 2>/dev/null || true
+            docker stop ecoguard-frontend 2>/dev/null || true
+            docker rm ecoguard-frontend 2>/dev/null || true
             
             # Builder la nouvelle image
-            sudo docker build -t ecoguard-frontend:latest ./frontend
+            docker build -t ecoguard-frontend:latest ./frontend
             
             # Démarrer le nouveau conteneur
-            sudo docker run -d \
+            docker run -d \
               --name ecoguard-frontend \
               --restart unless-stopped \
-              -p 8082:8082 \
+              -p 8082:80 \
               --network ecoguard-network \
               ecoguard-frontend:latest
             
             # Nettoyer les images non utilisées
-            sudo docker image prune -f
+            docker image prune -f
       
       - name: Vérifier le déploiement
         uses: appleboy/ssh-action@v1.0.0
@@ -91,10 +91,10 @@ jobs:
             cd ~/ecoguard
             
             # Vérifier que le conteneur tourne
-            sudo docker ps | grep ecoguard-frontend
+            docker ps | grep ecoguard-frontend
             
             # Afficher les logs récents
-            sudo docker logs --tail 20 ecoguard-frontend
+            docker logs --tail 20 ecoguard-frontend
       
       - name: Notification de succès
         if: success()
