@@ -21,5 +21,8 @@ COPY --from=build /app/www /usr/share/nginx/html
 # Copier la configuration Nginx personnalisée
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Permettre à nginx d'écouter sur le port 8082
+RUN sed -i 's/listen\s*80;/listen 8082;/' /etc/nginx/conf.d/default.conf || true
+
 EXPOSE 8082
 CMD ["nginx", "-g", "daemon off;"]
