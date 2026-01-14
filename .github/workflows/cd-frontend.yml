@@ -1,0 +1,88 @@
+name: CD Frontend - Déploiement automatique
+
+# Déclenchement uniquement sur push vers main
+on:
+  push:
+    branches:
+      - main
+      - ops-cicd
+    paths:
+      - 'frontend/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/cd-frontend.yml'
+
+jobs:
+  # ========================================
+  # Job : Déploiement sur le serveur
+  # ========================================
+  deploy:
+    name: Deploy Frontend to Server
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Copier les fichiers sur le serveur
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: "frontend/*"
+          target: ${{ secrets.DEPLOY_PATH || '/opt/ecoguard' }}
+          rm: true
+      
+      - name: Build et déployer sur le serveur
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH || '/opt/ecoguard' }}
+            
+            # Créer le réseau Docker s'il n'existe pas
+            docker network create ecoguard-network || true
+            
+            # Arrêter et supprimer l'ancien conteneur
+            docker stop ecoguard-frontend 2>/dev/null || true
+            docker rm ecoguard-frontend 2>/dev/null || true
+            
+            # Builder la nouvelle image
+            docker build -t ecoguard-frontend:latest ./frontend
+            
+            # Démarrer le nouveau conteneur
+            docker run -d \
+              --name ecoguard-frontend \
+              --restart unless-stopped \
+              -p 8081:80 \
+              --network ecoguard-network \
+              ecoguard-frontend:latest
+            
+            # Nettoyer les images non utilisées
+            docker image prune -f
+      
+      - name: Vérifier le déploiement
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            # Vérifier que le conteneur tourne
+            docker ps | grep ecoguard-frontend
+            
+            # Afficher les logs récents
+            docker logs --tail 20 ecoguard-frontend
+      
+      - name: Notification de succès
+        if: success()
+        run: echo "Déploiement du frontend réussi sur ${{ secrets.SSH_HOST }}"
+      
+      - name: Notification d'échec
+        if: failure()
+        run: echo "Échec du déploiement du frontend"
