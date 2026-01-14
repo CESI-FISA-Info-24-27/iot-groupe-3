@@ -21,11 +21,5 @@ COPY --from=build /app/www /usr/share/nginx/html
 # Copier la configuration Nginx personnalisée
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Utiliser un utilisateur non-root
-RUN touch /var/run/nginx.pid && \
-    chown -R nginx:nginx /var/run/nginx.pid /var/cache/nginx /usr/share/nginx/html
-
-USER nginx
-
 EXPOSE 8082
 CMD ["nginx", "-g", "daemon off;"]
