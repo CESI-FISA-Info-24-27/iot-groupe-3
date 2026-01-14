@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync, fakeAsync, tick } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { HeaderComponent } from './header.component';
@@ -14,10 +14,11 @@ describe('HeaderComponent', () => {
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   }));
 
-  it('should create', () => {
+  it('should create', fakeAsync(() => {
+    fixture.detectChanges();
+    tick();
     expect(component).toBeTruthy();
-  });
+  }));
 });

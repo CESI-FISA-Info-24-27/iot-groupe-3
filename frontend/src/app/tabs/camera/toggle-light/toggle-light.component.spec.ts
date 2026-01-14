@@ -14,6 +14,8 @@ describe('ToggleLightComponent', () => {
 
     fixture = TestBed.createComponent(ToggleLightComponent);
     component = fixture.componentInstance;
+    // Fournir la valeur requise pour le model
+    fixture.componentRef.setInput('lightState', false);
     fixture.detectChanges();
   }));
 
