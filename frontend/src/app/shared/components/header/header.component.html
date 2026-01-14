@@ -6,8 +6,16 @@
         <div class="title">CESIGuard</div>
       </div>
 
-      <div class="status" (click)="toggleText()" [class]="status()">
-        <span class="status-dot" [class]="status()"></span>
+      <div
+        class="status"
+        (click)="toggleText()"
+        [class]="statusToClass(status())"
+      >
+        <span
+          class="status-dot"
+          [class]="statusToClass(status())"
+          [class.clicked]="showText()"
+        ></span>
         @if(showText()) {
         <p>{{ status() }}</p>
         }

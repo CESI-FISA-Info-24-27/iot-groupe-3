@@ -1,11 +1,13 @@
-<div class="toggle-container" (click)="toggleLight()">
-  <span class="toggle-label">{{ lightState() ? "Allumé" : "Éteint" }}</span>
+<div class="toggle-container">
+  <span class="toggle-label">{{
+    lightState().lightOn ? "Allumé" : "Éteint"
+  }}</span>
 
-  <div class="toggle-track" [class.active]="lightState()">
-    <div class="toggle-thumb" [class.active]="lightState()">
+  <div class="toggle-track" [class.active]="lightState().lightOn">
+    <div class="toggle-thumb" [class.active]="lightState().lightOn">
       <svg
         class="icon sun"
-        [class.active]="lightState()"
+        [class.active]="lightState().lightOn"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -23,7 +25,7 @@
       </svg>
       <svg
         class="icon moon"
-        [class.active]="!lightState()"
+        [class.active]="!lightState().lightOn"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

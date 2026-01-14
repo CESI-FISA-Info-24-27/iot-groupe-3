@@ -37,4 +37,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
+}
+.no-motion {
+  @include red-hue;
+}
+
+.motion {
+  @include blue-green-hue;
 }

@@ -16,8 +16,19 @@
     />
     @if(streamLoaded()) {
     <div class="light-motion-container">
-      <div class="motion-container">WIP</div>
-      <app-toggle-light [(lightState)]="lightState" />
+      <div class="motion-container">
+        <div [class]="motionClass()">
+          {{
+            motionState()?.motionDetected
+              ? "Mouvement détecté"
+              : "Aucun mouvement"
+          }}
+        </div>
+      </div>
+      <app-toggle-light
+        [lightState]="lightState()"
+        (click)="onLightStateChange()"
+      />
     </div>
     }
   </div>

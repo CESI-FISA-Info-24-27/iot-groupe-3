@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { IonHeader, IonToolbar } from '@ionic/angular/standalone';
 import { StatusService } from '../../services/status-service';
+import { STATUS } from '../../models/status.model';
 
 @Component({
   selector: 'app-header',
@@ -28,5 +29,14 @@ export class HeaderComponent {
         this.timeoutId = undefined;
       }, 6000);
     }
+  }
+  statusToClass(st: STATUS) {
+    if (st === STATUS.OFFLINE) {
+      return 'Offline';
+    }
+    if (st === STATUS.ONLINE) {
+      return 'Online';
+    }
+    return 'Pending';
   }
 }
