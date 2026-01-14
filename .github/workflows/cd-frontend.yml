@@ -23,6 +23,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
+      - name: Préparer le dossier de déploiement
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            # Créer le dossier de déploiement s'il n'existe pas
+            mkdir -p ~/ecoguard
+            cd ~/ecoguard
+            
+            # Nettoyer les anciens fichiers frontend
+            rm -rf frontend
+      
       - name: Copier les fichiers sur le serveur
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -30,9 +45,9 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          source: "frontend/*"
-          target: ${{ secrets.DEPLOY_PATH || '/opt/ecoguard' }}
-          rm: true
+          source: "frontend/*,docker-compose.yml"
+          target: "~/ecoguard"
+          overwrite: true
       
       - name: Build et déployer sur le serveur
         uses: appleboy/ssh-action@v1.0.0
@@ -42,7 +57,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            cd ${{ secrets.DEPLOY_PATH || '/opt/ecoguard' }}
+            cd ~/ecoguard
             
             # Créer le réseau Docker s'il n'existe pas
             docker network create ecoguard-network || true
@@ -73,6 +88,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
+            cd ~/ecoguard
+            
             # Vérifier que le conteneur tourne
             docker ps | grep ecoguard-frontend
             
