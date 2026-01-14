@@ -9,8 +9,7 @@ describe('DashboardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ DashboardComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [DashboardComponent, IonicModule.forRoot()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(DashboardComponent);

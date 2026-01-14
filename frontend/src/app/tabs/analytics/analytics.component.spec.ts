@@ -9,8 +9,7 @@ describe('AnalyticsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ AnalyticsComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [AnalyticsComponent, IonicModule.forRoot()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(AnalyticsComponent);
