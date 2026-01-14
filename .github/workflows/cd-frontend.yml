@@ -70,10 +70,10 @@ jobs:
             sudo docker build -t ecoguard-frontend:latest ./frontend
             
             # Démarrer le nouveau conteneur
-            sudo docker run -d \
+            docker run -d \
               --name ecoguard-frontend \
               --restart unless-stopped \
-              -p 8081:80 \
+              -p 8081:8081 \
               --network ecoguard-network \
               ecoguard-frontend:latest
             
