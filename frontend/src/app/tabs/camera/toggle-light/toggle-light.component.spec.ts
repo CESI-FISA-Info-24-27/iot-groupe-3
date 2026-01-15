@@ -9,12 +9,13 @@ describe('ToggleLightComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ToggleLightComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [ToggleLightComponent, IonicModule.forRoot()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ToggleLightComponent);
     component = fixture.componentInstance;
+    // Fournir la valeur requise pour le model
+    fixture.componentRef.setInput('lightState', false);
     fixture.detectChanges();
   }));
 
