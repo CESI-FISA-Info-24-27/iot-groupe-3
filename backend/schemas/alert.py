@@ -1,11 +1,12 @@
-from pydantic import BaseModel
 from datetime import datetime
+from pydantic import Field
+from .base import ORMBase
 
-class AlertBase(BaseModel):
+class AlertBase(ORMBase):
     device_id: str
     alert_type: str
     value_triggered: float
-    snapshot_path: str
+    snapshot_path: str = Field(..., min_length=1, max_length=255)
 
 class AlertCreate(AlertBase):
     pass
@@ -13,6 +14,3 @@ class AlertCreate(AlertBase):
 class AlertRead(AlertBase):
     id: int
     timestamp: datetime
-
-    class Config:
-        orm_mode = True

@@ -1,7 +1,7 @@
-from pydantic import BaseModel
 from datetime import datetime
+from .base import ORMBase
 
-class TemperatureBase(BaseModel):
+class TemperatureBase(ORMBase):
     device_id: str
     value: float
     humidity: float
@@ -12,6 +12,3 @@ class TemperatureCreate(TemperatureBase):
 class TemperatureRead(TemperatureBase):
     id: int
     timestamp: datetime
-
-    class Config:
-        orm_mode = True

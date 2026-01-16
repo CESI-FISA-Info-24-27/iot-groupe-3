@@ -1,9 +1,9 @@
-from pydantic import BaseModel
 from datetime import datetime
+from .base import ORMBase
 
-class MeasurementBase(BaseModel):
+class MeasurementBase(ORMBase):
     device_id: str
-    type: str
+    measurement_type: str
     value: float
 
 class MeasurementCreate(MeasurementBase):
@@ -12,6 +12,3 @@ class MeasurementCreate(MeasurementBase):
 class MeasurementRead(MeasurementBase):
     id: int
     timestamp: datetime
-
-    class Config:
-        orm_mode = True

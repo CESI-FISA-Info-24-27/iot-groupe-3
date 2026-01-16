@@ -15,6 +15,6 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
-
-def init_db() -> None:
+def init_db():
+    """Créer les tables si elles n'existent pas encore."""
     Base.metadata.create_all(bind=engine)
