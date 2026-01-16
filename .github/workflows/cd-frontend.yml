@@ -1,13 +1,11 @@
 name: CD Frontend - Déploiement automatique
 
-# Déclenchement uniquement après succès du CI sur main
+# Déclenchement uniquement après succès du CI
 on:
   workflow_run:
     workflows: ["CI EcoGuard IoT"]
     types:
       - completed
-    branches:
-      - main
 
 jobs:
   # ========================================
@@ -42,8 +40,9 @@ jobs:
   deploy:
     name: Deploy Frontend to Server
     runs-on: ubuntu-latest
-    # Ne déployer que si le CI a réussi
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: [check-changes]
+    # Ne déployer que si le CI a réussi ET que des fichiers frontend ont changé
+    if: ${{ needs.check-changes.outputs.frontend-changed == 'true' }}
     
     steps:
       - name: Checkout code
