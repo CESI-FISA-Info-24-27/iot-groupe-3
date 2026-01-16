@@ -1,9 +1,8 @@
 name: CI EcoGuard IoT
 
-# Déclenchement sur push et pull request (obligatoire pour notation)
+# Déclenchement sur push uniquement (évite les doublons avec PR)
 on:
-    push:
-    pull_request:
+  push:
 
 jobs:
   # ========================================
