@@ -40,8 +40,8 @@ class AlertOut(BaseModel):
     snapshot_path: str
     timestamp: datetime
 
-    class Config:
-        from_attributes = True
+class Config:
+    from_attributes = True
 
 
 class LedCreate(BaseModel):
@@ -54,8 +54,8 @@ class LedOut(BaseModel):
     device_id: str
     status: LedStatus
 
-    class Config:
-        from_attributes = True
+class Config:
+    from_attributes = True
 
 
 class TemperatureCreate(BaseModel):
@@ -71,5 +71,5 @@ class TemperatureOut(BaseModel):
     humidity: float
     timestamp: datetime
 
-    class Config:
-        from_attributes = True
+class Config:
+    from_attributes = True
