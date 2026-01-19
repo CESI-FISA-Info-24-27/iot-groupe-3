@@ -11,7 +11,7 @@ from schemas import (
 
 app = FastAPI()
 
-init_db()  # Crée les tables au démarrage
+init_db() 
 
 def get_db():
     db = SessionLocal()
