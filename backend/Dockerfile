@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
+# Créer le répertoire pour la base de données SQLite
+RUN mkdir -p /app/data
+
 # Copie des requirements (à créer par l'architecte backend)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -18,8 +21,5 @@ COPY . .
 # Exposition du port API
 EXPOSE 8000
 
-# Commande de lancement (à adapter selon le framework choisi)
-# Pour FastAPI/Uvicorn :
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
-# Pour Flask :
-# CMD ["python", "src/main.py"]
+# Commande de lancement avec FastAPI/Uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
