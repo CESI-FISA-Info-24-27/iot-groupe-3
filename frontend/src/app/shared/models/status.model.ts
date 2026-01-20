@@ -1,5 +1,5 @@
 export enum STATUS {
-  ONLINE = 'Online',
-  OFFLINE = 'Offline',
-  PENDING = 'Pending',
+  ONLINE = 'En ligne',
+  OFFLINE = 'Hors Ligne',
+  PENDING = 'En attente',
 }

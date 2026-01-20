@@ -49,6 +49,11 @@
   animation: pulse 1.5s ease-in-out infinite;
   flex-shrink: 0;
 
+  &.clicked {
+    // pop runs once; placed after pulse so it "wins" for transform during the click
+    animation: pulse 1.5s ease-in-out infinite, dot-pop 220ms ease-out 1;
+  }
+
   &.Online {
     background-color: #{$main-light-green};
     box-shadow: 0 0 8px #{$main-light-green};
@@ -62,6 +67,18 @@
   &.Pending {
     background-color: #{$main-orange};
     box-shadow: 0 0 8px #{$main-orange};
+  }
+}
+
+@keyframes dot-pop {
+  0% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.8);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 

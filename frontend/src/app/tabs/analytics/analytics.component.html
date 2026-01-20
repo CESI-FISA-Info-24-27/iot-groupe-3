@@ -8,8 +8,36 @@
     [averageTemperature]="averageTemperature()"
     [averageHumidity]="averageHumidity()"
   ></app-data-summary>
-  <div class="section-title mt-20">Température et humidité</div>
+  <div class="section-title mt-20">Température</div>
   <div class="chart-container">
     <canvas #temperatureChart></canvas>
+  </div>
+  <div class="section-title mt-20">Humidité</div>
+
+  <div class="chart-container">
+    <canvas #humidityChart></canvas>
+  </div>
+
+  <div class="section-title mt-20 mb-10">Évènements de la salle</div>
+
+  <div class="table-container">
+    <table>
+      <tr>
+        <th>Évènement</th>
+        <th>Heure</th>
+      </tr>
+      @for(event of lastEvents(); track $index) {
+      <tr>
+        <td>{{ event.type }}</td>
+        <td>{{ event.timestamp | date : "HH:mm" }}</td>
+      </tr>
+      }
+    </table>
+  </div>
+  <div (click)="downloadCSV()">
+    <div class="ion-activatable ripple-parent mt-20">
+      Exporter les données en CSV (dernières 24h)
+      <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
+    </div>
   </div>
 </ion-content>

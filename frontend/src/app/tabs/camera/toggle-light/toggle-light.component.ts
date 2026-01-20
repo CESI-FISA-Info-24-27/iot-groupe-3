@@ -1,4 +1,5 @@
-import { Component, model } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { LightInfo } from 'src/app/shared/models/sensors.model';
 
 @Component({
   selector: 'app-toggle-light',
@@ -7,9 +8,5 @@ import { Component, model } from '@angular/core';
   imports: [],
 })
 export class ToggleLightComponent {
-  lightState = model.required<boolean>();
-
-  toggleLight(): void {
-    this.lightState.set(!this.lightState());
-  }
+  lightState = input.required<LightInfo>();
 }
