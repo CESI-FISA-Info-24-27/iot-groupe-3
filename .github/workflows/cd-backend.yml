@@ -22,6 +22,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
       
       - name: Check path filter
@@ -46,6 +47,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
       
       - name: Préparer le dossier de déploiement
         uses: appleboy/ssh-action@v1.0.0
@@ -55,12 +58,14 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
+            set -e
+            
             # Créer le dossier de déploiement s'il n'existe pas
-            mkdir -p ~/ecoguard
-            cd ~/ecoguard
+            mkdir -p $HOME/ecoguard
+            cd $HOME/ecoguard
             
             # Créer le dossier pour la base de données SQLite (partagé avec sqlite-web)
-            mkdir -p ~/data
+            mkdir -p $HOME/data
             
             # Nettoyer les anciens fichiers backend (sauf la BDD)
             rm -rf backend
@@ -84,7 +89,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            cd ~/ecoguard/backend
+            cd $HOME/ecoguard/backend
             
             # Créer le fichier .env avec la configuration SQLite
             cat > .env << EOF
@@ -101,7 +106,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            cd ~/ecoguard
+            set -e
+            cd $HOME/ecoguard
             
             # Créer le réseau Docker s'il n'existe pas
             docker network create ecoguard-network || true
@@ -110,8 +116,8 @@ jobs:
             docker stop ecoguard-backend 2>/dev/null || true
             docker rm ecoguard-backend 2>/dev/null || true
             
-            # Builder la nouvelle image
-            docker build -t ecoguard-backend:latest ./backend
+            # Builder la nouvelle image avec timeout
+            timeout 10m docker build -t ecoguard-backend:latest ./backend
             
             # Démarrer le nouveau conteneur avec volume pour SQLite (partagé avec sqlite-web)
             docker run -d \
@@ -120,8 +126,8 @@ jobs:
               --security-opt apparmor=unconfined \
               -p 8081:8000 \
               --network ecoguard-network \
-              -v ~/data:/app/data \
-              --env-file ~/ecoguard/backend/.env \
+              -v $HOME/data:/app/data \
+              --env-file $HOME/ecoguard/backend/.env \
               ecoguard-backend:latest
             
             # Attendre que le conteneur démarre
@@ -129,11 +135,11 @@ jobs:
             sleep 3
             
             # Vérifier si le conteneur tourne
-            if docker ps | grep -q ecoguard-backend; then
+            if docker ps --filter name=ecoguard-backend --format "{{.Names}}" | grep -q ecoguard-backend; then
               echo "✅ Conteneur démarré avec succès"
             else
               echo "❌ Le conteneur n'a pas démarré, vérification des logs..."
-              docker logs ecoguard-backend || echo "Pas de logs disponibles"
+              docker logs ecoguard-backend 2>&1 || echo "Pas de logs disponibles"
               exit 1
             fi
             
@@ -148,11 +154,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            cd ~/ecoguard
+            set -e
+            cd $HOME/ecoguard
             
             # Vérifier que le conteneur tourne
             echo "🔍 Vérification du statut du conteneur..."
-            docker ps -a | grep ecoguard-backend
+            docker ps --filter name=ecoguard-backend --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" || exit 1
             
             # Vérifier la politique de redémarrage automatique
             echo "🔄 Vérification de la politique de redémarrage..."
@@ -173,22 +180,23 @@ jobs:
             
             # Test de santé sur l'endpoint root
             echo "🏥 Test de santé du backend..."
-            if curl -f http://localhost:8081/ 2>/dev/null; then
+            if curl -f -s -o /dev/null -w "%{http_code}" http://localhost:8081/ | grep -q "200\|404"; then
               echo "✅ API répond correctement"
             else
-              echo "⚠️ L'API ne répond pas encore, vérification approfondie..."
-              docker inspect ecoguard-backend | grep -A 10 State
+              echo "❌ L'API ne répond pas, vérification de l'état du conteneur..."
+              docker inspect ecoguard-backend --format='{{json .State}}' | jq .
+              exit 1
             fi
             
             # Vérifier que la base de données a été créée
             echo "💾 Vérification de la base de données..."
-            if [ -f ~/data/ecoguard.db ]; then
+            if [ -f $HOME/data/ecoguard.db ]; then
               echo "✅ Base de données SQLite accessible"
-              ls -lh ~/data/ecoguard.db
+              ls -lh $HOME/data/ecoguard.db
               echo "ℹ️  BDD partagée avec sqlite-web sur port 8080"
             else
               echo "ℹ️  Base de données pas encore créée (normal si première initialisation)"
-              ls -la ~/data/ || echo "Le dossier n'existe pas"
+              ls -la $HOME/data/ || echo "Le dossier n'existe pas"
             fi
       
       - name: Notification de succès
