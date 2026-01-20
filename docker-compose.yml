@@ -6,10 +6,27 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./data:/data
+      - db-data:/data
     command: sqlite_web -H 0.0.0.0 -p 8080 /data/ecoguard.db
     networks:
       - ecoguard-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecoguard-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - db-data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:////app/data/ecoguard.db
+    networks:
+      - ecoguard-network
+    depends_on:
+      - sqlite-web
 
   frontend:
     build:
@@ -25,3 +42,11 @@ services:
 networks:
   ecoguard-network:
     driver: bridge
+
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/cesiot/data
