@@ -93,6 +93,7 @@ jobs:
             docker run -d \
               --name ecoguard-backend \
               --restart unless-stopped \
+              --security-opt apparmor=unconfined \
               -p 8081:8000 \
               --network ecoguard-network \
               -v ~/ecoguard/data/backend:/app/data \
