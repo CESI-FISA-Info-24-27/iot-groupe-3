@@ -1,4 +1,4 @@
-import { effect, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { TemperatureInfo } from '../models/sensors.model';
 
 @Injectable({
@@ -38,7 +38,7 @@ export class TemperatureService {
           values.length > 0 ? values[values.length - 1].temperature : 25;
         const newTemp = Math.max(
           15,
-          Math.min(35, lastTemp + Math.random() * 4 - 2)
+          Math.min(35, lastTemp + Math.random() * 4 - 2),
         );
         const newValue: TemperatureInfo = {
           temperature: newTemp,

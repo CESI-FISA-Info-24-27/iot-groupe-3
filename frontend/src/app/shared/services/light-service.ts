@@ -1,4 +1,4 @@
-import { effect, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { LightInfo } from '../models/sensors.model';
 
 @Injectable({

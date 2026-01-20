@@ -1,4 +1,4 @@
-import { effect, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HumidityInfo } from '../models/sensors.model';
 
 @Injectable({
@@ -38,7 +38,7 @@ export class HumidityService {
           values.length > 0 ? values[values.length - 1].humidity : 50;
         const newHumidity = Math.max(
           20,
-          Math.min(90, lastHumidity + Math.random() * 6 - 3)
+          Math.min(90, lastHumidity + Math.random() * 6 - 3),
         );
         const newValue: HumidityInfo = {
           humidity: newHumidity,
