@@ -98,7 +98,6 @@ jobs:
             docker run -d \
               --name ecoguard-frontend \
               --restart unless-stopped \
-              --security-opt apparmor=unconfined \
               -p 8082:80 \
               --network ecoguard-network \
               ecoguard-frontend:latest
@@ -118,6 +117,15 @@ jobs:
             
             # Vérifier que le conteneur tourne
             docker ps | grep ecoguard-frontend
+            
+            # Vérifier la politique de redémarrage automatique
+            echo "🔄 Vérification de la politique de redémarrage..."
+            RESTART_POLICY=$(docker inspect ecoguard-frontend --format='{{.HostConfig.RestartPolicy.Name}}')
+            if [ "$RESTART_POLICY" = "unless-stopped" ]; then
+              echo "✅ Politique de redémarrage: $RESTART_POLICY (le conteneur redémarrera automatiquement)"
+            else
+              echo "⚠️ Politique de redémarrage: $RESTART_POLICY (devrait être 'unless-stopped')"
+            fi
             
             # Afficher les logs récents
             docker logs --tail 20 ecoguard-frontend
