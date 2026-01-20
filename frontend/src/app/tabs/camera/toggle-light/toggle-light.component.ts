@@ -1,4 +1,4 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { LightInfo } from 'src/app/shared/models/sensors.model';
 
 @Component({
