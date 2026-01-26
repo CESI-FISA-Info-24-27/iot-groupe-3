@@ -26,9 +26,6 @@ export class StatusService {
           this.status.set(STATUS.OFFLINE);
         }
       },
-      error: () => {
-        this.status.set(STATUS.OFFLINE);
-      },
     });
   }
 }
