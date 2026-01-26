@@ -10,7 +10,7 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./dashboard/dashboard.component').then(
-            (m) => m.DashboardComponent
+            (m) => m.DashboardComponent,
           ),
       },
       {
@@ -22,7 +22,7 @@ export const routes: Routes = [
         path: 'analytics',
         loadComponent: () =>
           import('./analytics/analytics.component').then(
-            (m) => m.AnalyticsComponent
+            (m) => m.AnalyticsComponent,
           ),
       },
       {

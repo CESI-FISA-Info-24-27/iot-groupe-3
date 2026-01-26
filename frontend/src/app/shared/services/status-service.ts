@@ -9,12 +9,26 @@ export class StatusService {
   private http = inject(HttpClient);
 
   status = signal<STATUS>(STATUS.OFFLINE);
+
   constructor() {
+    this.checkBackendStatus();
     setInterval(() => {
-      const statuses = Object.values(STATUS);
-      const randomStatus =
-        statuses[Math.floor(Math.random() * statuses.length)];
-      this.status.set(randomStatus);
-    }, 7000);
+      this.checkBackendStatus();
+    }, 5000);
+  }
+
+  private checkBackendStatus(): void {
+    this.http.get('http://localhost:3000/', { observe: 'response' }).subscribe({
+      next: (response) => {
+        if (response.status === 200) {
+          this.status.set(STATUS.ONLINE);
+        } else {
+          this.status.set(STATUS.OFFLINE);
+        }
+      },
+      error: () => {
+        this.status.set(STATUS.OFFLINE);
+      },
+    });
   }
 }

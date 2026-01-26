@@ -51,7 +51,9 @@
 
   &.clicked {
     // pop runs once; placed after pulse so it "wins" for transform during the click
-    animation: pulse 1.5s ease-in-out infinite, dot-pop 220ms ease-out 1;
+    animation:
+      pulse 1.5s ease-in-out infinite,
+      dot-pop 220ms ease-out 1;
   }
 
   &.Online {

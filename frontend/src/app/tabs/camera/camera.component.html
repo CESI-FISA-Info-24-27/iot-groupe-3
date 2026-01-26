@@ -2,10 +2,10 @@
 
 <ion-content class="ion-padding">
   <div class="camera-container">
-    @if(!streamLoaded()) {
-    <app-spinner message="Chargement de la caméra..." />
+    @if (!streamLoaded()) {
+      <app-spinner message="Chargement de la caméra..." />
     } @else {
-    <div class="section-title">Flux vidéo de la caméra</div>
+      <div class="section-title">Flux vidéo de la caméra</div>
     }
     <img
       [src]="streamUrl"
@@ -14,22 +14,22 @@
       (load)="onStreamLoad()"
       (error)="onStreamError()"
     />
-    @if(streamLoaded()) {
-    <div class="light-motion-container">
-      <div class="motion-container">
-        <div [class]="motionClass()">
-          {{
-            motionState()?.motionDetected
-              ? "Mouvement détecté"
-              : "Aucun mouvement"
-          }}
+    @if (streamLoaded()) {
+      <div class="light-motion-container">
+        <div class="motion-container">
+          <div [class]="motionClass()">
+            {{
+              motionState()?.motionDetected
+                ? "Mouvement détecté"
+                : "Aucun mouvement"
+            }}
+          </div>
         </div>
+        <app-toggle-light
+          [lightState]="lightState()"
+          (click)="onLightStateChange()"
+        />
       </div>
-      <app-toggle-light
-        [lightState]="lightState()"
-        (click)="onLightStateChange()"
-      />
-    </div>
     }
   </div>
 </ion-content>
