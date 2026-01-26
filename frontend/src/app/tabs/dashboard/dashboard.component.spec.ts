@@ -7,6 +7,8 @@ import {
 } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { DashboardComponent } from './dashboard.component';
 
@@ -17,6 +19,7 @@ describe('DashboardComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DashboardComponent, IonicModule.forRoot()],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
 
