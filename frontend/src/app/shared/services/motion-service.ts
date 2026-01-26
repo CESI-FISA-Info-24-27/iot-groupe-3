@@ -1,5 +1,8 @@
 import { Injectable, signal } from '@angular/core';
+import { io } from 'socket.io-client';
+import { BASE_BACKEND_URL } from '../models/request-parameters.model';
 import { MotionInfo } from '../models/sensors.model';
+import { ValuePayload } from '../models/value-payload';
 
 @Injectable({
   providedIn: 'root',
@@ -8,41 +11,17 @@ export class MotionService {
   motionValues = signal<MotionInfo[]>([]);
 
   constructor() {
-    this.initializeMockData();
-    this.startLiveUpdates();
-  }
+    let socket = io(BASE_BACKEND_URL);
 
-  private initializeMockData(): void {
-    const now = new Date();
-    const initialCount = Math.floor(Math.random() * 11) + 10; // 10-20 values
-    const initialData: MotionInfo[] = [];
-
-    for (let i = initialCount - 1; i >= 0; i--) {
-      const timestamp = new Date(now.getTime() - i * 3000); // 3 seconds apart
-      initialData.push({
-        motionDetected: Math.random() > 0.7, // 30% chance of motion
-        timestamp,
-      });
-    }
-
-    this.motionValues.set(initialData);
-  }
-
-  private startLiveUpdates(): void {
-    setInterval(() => {
-      const newMotionState = Math.random() > 0.7; // 30% chance of motion
-      const currentState = this.getCurrentMotionState();
-
-      if (newMotionState !== currentState) {
-        this.motionValues.update((values) => {
-          const newValue: MotionInfo = {
-            motionDetected: newMotionState,
-            timestamp: new Date(),
-          };
-          return [...values, newValue].slice(-50); // Keep last 50 values
-        });
-      }
-    }, 3000);
+    socket.on('motion:current', (newCurrentMotion: ValuePayload) => {
+      this.motionValues.update((values) => [
+        ...values,
+        {
+          motionDetected: newCurrentMotion.value === 1,
+          timestamp: new Date(newCurrentMotion.timestamp),
+        },
+      ]);
+    });
   }
 
   getCurrentMotionState(): boolean {

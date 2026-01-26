@@ -1,10 +1,13 @@
-import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
 import { STATUS } from '../models/status.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatusService {
+  private http = inject(HttpClient);
+
   status = signal<STATUS>(STATUS.OFFLINE);
   constructor() {
     setInterval(() => {

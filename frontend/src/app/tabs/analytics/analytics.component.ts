@@ -1,29 +1,28 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
+  computed,
+  effect,
+  ElementRef,
   inject,
   ViewChild,
-  ElementRef,
-  effect,
-  AfterViewInit,
-  computed,
 } from '@angular/core';
 import { IonContent, IonRippleEffect } from '@ionic/angular/standalone';
-import { HeaderComponent } from 'src/app/shared/components/header/header.component';
-import { TemperatureService } from 'src/app/shared/services/temperature-service';
-import { HumidityService } from 'src/app/shared/services/humidity-service';
-import { MotionService } from 'src/app/shared/services/motion-service';
-import { LightService } from 'src/app/shared/services/light-service';
 import { Chart, registerables } from 'chart.js';
-import { DataSummaryComponent } from './data-summary/data-summary.component';
+import { HeaderComponent } from 'src/app/shared/components/header/header.component';
+import { ROOM_EVENT } from 'src/app/shared/models/events.model';
 import {
   HumidityInfo,
-  TemperatureInfo,
-  MotionInfo,
   LightInfo,
+  MotionInfo,
+  TemperatureInfo,
 } from 'src/app/shared/models/sensors.model';
-import { ROOM_EVENT } from 'src/app/shared/models/events.model';
-import { DatePipe } from '@angular/common';
 import { DownloadService } from 'src/app/shared/services/download-service';
+import { HumidityService } from 'src/app/shared/services/humidity-service';
+import { LightService } from 'src/app/shared/services/light-service';
+import { MotionService } from 'src/app/shared/services/motion-service';
+import { TemperatureService } from 'src/app/shared/services/temperature-service';
+import { DataSummaryComponent } from './data-summary/data-summary.component';
 
 Chart.register(...registerables);
 
@@ -54,13 +53,13 @@ export class AnalyticsComponent {
   currentTemperature = computed(() => {
     const temps = this.temperatureService.temperatureValues();
     const last = temps.at(-1);
-    return last ? Math.round(last.temperature) : NaN;
+    return last?.temperature ?? NaN;
   });
 
   currentHumidity = computed(() => {
     const hums = this.humidityService.humidityValues();
     const last = hums.at(-1);
-    return last ? Math.round(last.humidity) : NaN;
+    return last?.humidity ?? NaN;
   });
 
   lastTemperatureUpdate = computed(() => {
@@ -74,17 +73,11 @@ export class AnalyticsComponent {
   });
 
   averageTemperature = computed(() => {
-    const temps = this.temperatureService.temperatureValues();
-    if (temps.length === 0) return 0;
-    const sum = temps.reduce((acc, val) => acc + val.temperature, 0);
-    return Math.round(sum / temps.length);
+    return this.temperatureService.averageRoomTemperature().temperature;
   });
 
   averageHumidity = computed(() => {
-    const hums = this.humidityService.humidityValues();
-    if (hums.length === 0) return 0;
-    const sum = hums.reduce((acc, val) => acc + val.humidity, 0);
-    return Math.round(sum / hums.length);
+    return this.humidityService.averageRoomHumidity().humidity;
   });
 
   // 30 most recent events from motion and light sensors
@@ -104,7 +97,7 @@ export class AnalyticsComponent {
     const all = [...motionEvents, ...lightEvents];
     all.sort(
       (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
     return all.slice(0, 30);
   });
@@ -138,7 +131,7 @@ export class AnalyticsComponent {
   }
 
   createTemperatureChart(
-    temperatures: { temperature: number; timestamp: Date }[]
+    temperatures: { temperature: number; timestamp: Date }[],
   ) {
     const labels = temperatures.map((t) => this.formatTimestamp(t.timestamp));
     const ctx = this.temperatureChart.nativeElement.getContext('2d')!;
@@ -190,7 +183,7 @@ export class AnalyticsComponent {
             },
           },
         },
-      }
+      },
     );
   }
 
@@ -201,7 +194,7 @@ export class AnalyticsComponent {
       0,
       0,
       ctx.canvas.width,
-      0
+      0,
     );
     humidityGradient.addColorStop(0, '#f59e0b');
     humidityGradient.addColorStop(1, '#ef4444');
@@ -258,7 +251,7 @@ export class AnalyticsComponent {
     const labels = temperatures.map((t) => this.formatTimestamp(t.timestamp));
     this.temperatureChartInstance.data.labels = labels;
     this.temperatureChartInstance.data.datasets[0].data = temperatures.map(
-      (t) => t.temperature
+      (t) => t.temperature,
     );
     this.temperatureChartInstance.update();
   }
@@ -268,7 +261,7 @@ export class AnalyticsComponent {
     const labels = humidity.map((h) => this.formatTimestamp(h.timestamp));
     this.humidityChartInstance.data.labels = labels;
     this.humidityChartInstance.data.datasets[0].data = humidity.map(
-      (h) => h.humidity
+      (h) => h.humidity,
     );
     this.humidityChartInstance.update();
   }
@@ -277,7 +270,7 @@ export class AnalyticsComponent {
     this.downloadService.downloadFile(
       'TEMP DATA',
       'CESIGuard-data-export.csv',
-      'csv'
+      'csv',
     );
   }
 }
