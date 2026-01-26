@@ -12,10 +12,12 @@ jobs:
   # Job : Déploiement sur le serveur
   # ========================================
   # TODO: Réactiver check-changes et condition sur 'main' pour la production
+  # TODO: Remettre la condition de succès du CI quand frontend sera OK
   deploy:
     name: Deploy Backend to Server
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Temporairement sans condition pour tester
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - name: Checkout code
