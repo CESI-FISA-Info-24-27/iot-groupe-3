@@ -33,8 +33,7 @@ jobs:
       
       - name: Run unit tests
         working-directory: backend
-        run: npm test || echo "⚠️ Tests non configurés"
-        continue-on-error: true
+        run: npm test
 
   # ========================================
   # Job 2 : Tests Frontend (Angular)
@@ -87,7 +86,7 @@ jobs:
       - name: Run CppCheck
         run: |
           cppcheck --enable=all --inconclusive --xml --xml-version=2 embedded/ 2> cppcheck-report.xml || echo "⚠️ CppCheck warnings detected"
-          cppcheck --enable=all embedded/ || echo "⚠️ Code quality issues detected"
+          cppcheck --enable=all embedded/ || echo "Code quality issues detected"
         continue-on-error: true
 
   # ========================================
@@ -147,7 +146,7 @@ jobs:
 
       - name: Start frontend service
         run: |
-          docker compose up -d frontend || echo "ℹ️ Frontend service start skipped"
+          docker compose up -d frontend || echo "Frontend service start skipped"
           sleep 10
         continue-on-error: true
 

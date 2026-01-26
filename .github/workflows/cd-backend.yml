@@ -127,7 +127,7 @@ jobs:
             
             # Health check optionnel (attendre 10s puis tester)
             sleep 10
-            curl -f http://localhost:8081/health || echo "⚠️ Health check failed"
+            curl -f http://localhost:8081/status || echo "⚠️ Status check failed"
       
       - name: Notification de succès
         if: success()
