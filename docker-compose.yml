@@ -3,25 +3,41 @@ services:
     image: coleifer/sqlite-web
     container_name: ecoguard-db-manager
     restart: unless-stopped
-    ports:
-      - "8080:8080"
+    privileged: true
+    network_mode: "host"
     volumes:
       - ./data:/data
     command: sqlite_web -H 0.0.0.0 -p 8080 /data/ecoguard.db
-    networks:
-      - ecoguard-network
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: ecoguard-frontend
+  influxdb:
+    image: influxdb:3-core
+    container_name: ecoguard-influxdb
     restart: unless-stopped
+    privileged: true
     ports:
-      - "8081:80"
+      - "8181:8181"
+    volumes:
+      - ./influxdb-data:/var/lib/influxdb3/data
+      - ./influxdb-plugins:/var/lib/influxdb3/plugins
+    command:
+      - influxdb3
+      - serve
+      - --node-id=ecoguard-node0
+      - --object-store=file
+      - --data-dir=/var/lib/influxdb3/data
+      - --plugin-dir=/var/lib/influxdb3/plugins
+      - --without-auth
     networks:
       - ecoguard-network
 
 networks:
   ecoguard-network:
     driver: bridge
+
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/cesiot/data
