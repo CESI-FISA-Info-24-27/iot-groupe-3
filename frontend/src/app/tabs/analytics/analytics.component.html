@@ -26,11 +26,11 @@
         <th>Évènement</th>
         <th>Heure</th>
       </tr>
-      @for(event of lastEvents(); track $index) {
-      <tr>
-        <td>{{ event.type }}</td>
-        <td>{{ event.timestamp | date : "HH:mm" }}</td>
-      </tr>
+      @for (event of lastEvents(); track $index) {
+        <tr>
+          <td>{{ event.type }}</td>
+          <td>{{ event.timestamp | date: "HH:mm" }}</td>
+        </tr>
       }
     </table>
   </div>

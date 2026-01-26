@@ -31,6 +31,7 @@ Cochez les cases appropriées :
 - [ ] Tests avec l'application mobile
 
 **Configuration de test** :
+
 - Matériel : <!-- Ex: Raspberry Pi 4 + ESP32 -->
 - Environnement : <!-- Ex: Docker / Local -->
 

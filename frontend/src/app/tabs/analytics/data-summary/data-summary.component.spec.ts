@@ -9,7 +9,7 @@ describe('DataSummaryComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [DataSummaryComponent, IonicModule.forRoot()]
+      imports: [DataSummaryComponent, IonicModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DataSummaryComponent);

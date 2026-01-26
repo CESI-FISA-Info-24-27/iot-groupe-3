@@ -9,7 +9,7 @@ describe('ToggleLightComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ToggleLightComponent, IonicModule.forRoot()]
+      imports: [ToggleLightComponent, IonicModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ToggleLightComponent);
