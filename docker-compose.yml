@@ -30,6 +30,36 @@ services:
     networks:
       - ecoguard-network
 
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: ecoguard-mqtt
+    restart: unless-stopped
+    privileged: true
+
+    ports:
+      - "1883:1883"  # Port standard
+      - "9001:9001"  # Port WebSocket
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - ecoguard-network
+
+  telegraf:
+    image: telegraf:latest
+    container_name: ecoguard-telegraf
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      # On lie le fichier de config qu'on va créer juste après
+      - ./telegraf/telegraf.conf:/home/cesiot/telegraf/telegraf.conf:ro
+    depends_on:
+      - mosquitto
+      - influxdb
+    networks:
+      - ecoguard-network
+
 networks:
   ecoguard-network:
     driver: bridge
