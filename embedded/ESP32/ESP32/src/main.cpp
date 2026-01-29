@@ -1,27 +1,40 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include <NimBLEDevice.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BMP280.h>
 
+/* ===================== DEFINES ===================== */
 #define BUILTIN_LED 2
 
-#define SERVICE_ENV_UUID        "181A"
-#define CHAR_TEMP_UUID          "f1047d07-53c8-4877-9c5f-29f7161c516d"
+#define BMP_SDA 21
+#define BMP_SCL 22
 
-#define SERVICE_AUTOMATION_UUID "1815"
-#define CHAR_LED_UUID           "2A56"
+#define SERVICE_ENV_UUID        "0d57fddd-b6d0-458d-a9e3-ede9919198d4"
+#define CHAR_TEMP_UUID          "f1047d07-53c8-4877-9c5f-29f7161c516d"
+#define CHAR_PRESSION_UIID      "79d4a577-2f8e-4b44-922a-b807b600eb80"
+
+#define SERVICE_AUTOMATION_UUID "e4115b34-f55b-4e7b-9313-028bfcc5285f"
+#define CHAR_LED_UUID           "3e92916e-15bd-4a65-abbd-b60b07b4e064"
 
 #define DEVICE_NAME "EcoGuard_GrpX"
 
+/* ===================== GLOBALS ===================== */
 float temperature = 20.0;
+float pressure = 00.0;
 bool deviceConnected = false;
+bool scaning = true;
+
+Adafruit_BMP280 bmp; // I2C
 
 NimBLEServer* pServer = nullptr;
 NimBLEService* pEnvService = nullptr;
 NimBLEService* pAutomationService = nullptr;
 NimBLECharacteristic* pTempCharacteristic = nullptr;
+NimBLECharacteristic* pPressionCharacteristic = nullptr;
 NimBLECharacteristic* pLEDCharacteristic = nullptr;
 
 /* ===================== CALLBACKS ===================== */
-
 class ServerCallbacks : public NimBLEServerCallbacks 
 {
   void onConnect(NimBLEServer* pServer) override 
@@ -69,8 +82,16 @@ void setup()
   pinMode(BUILTIN_LED, OUTPUT);
   digitalWrite(BUILTIN_LED, LOW);
 
+  Wire.begin();
+
   Serial.begin(115200);
-  Serial.println("Init BLE NimBLE");
+  Serial.println("Init ESP32 BLE + Sensor");
+
+  if(!bmp.begin(0x77))
+  {
+    Serial.println("Can't find BMP280 device");
+    while (1);
+  }
 
   /* Init NimBLE */
   NimBLEDevice::init(DEVICE_NAME);
@@ -94,12 +115,26 @@ void setup()
     NIMBLE_PROPERTY::INDICATE
   );
 
+  pPressionCharacteristic = pEnvService->createCharacteristic(
+    CHAR_PRESSION_UIID,
+    NIMBLE_PROPERTY::READ |
+    NIMBLE_PROPERTY::NOTIFY |
+    NIMBLE_PROPERTY::INDICATE
+  );
+
   // Descriptor 0x2904 (Characteristic Presentation Format)
   NimBLE2904* pFormat = new NimBLE2904();
   pFormat->setFormat(NimBLE2904::FORMAT_FLOAT32);
   pFormat->setUnit(0x272F); // °C
   pFormat->setExponent(0);
   pTempCharacteristic->addDescriptor(pFormat);
+
+  // Descriptor 0x2904 (Characteristic Presentation Format)
+  NimBLE2904* pFormat2 = new NimBLE2904();
+  pFormat2->setFormat(NimBLE2904::FORMAT_FLOAT32);
+  pFormat2->setUnit(0x2781); // hPa
+  pFormat2->setExponent(0);
+  pPressionCharacteristic->addDescriptor(pFormat2);
 
   /* LED */
   pLEDCharacteristic = pAutomationService->createCharacteristic(
@@ -115,6 +150,8 @@ void setup()
   NimBLEAdvertising* pAdvertising = NimBLEDevice::getAdvertising();
   pAdvertising->setName(DEVICE_NAME);
   pAdvertising->setScanResponse(true);
+  pAdvertising->addServiceUUID(SERVICE_ENV_UUID);
+  pAdvertising->addServiceUUID(SERVICE_AUTOMATION_UUID);
   pAdvertising->start();
 
   Serial.println("Advertising started");
@@ -124,14 +161,53 @@ void setup()
 
 void loop() 
 {
-  temperature += 0.5;
-  if (temperature > 40.0) temperature = 20.0;
+
+  if(scaning)
+  {
+    byte error, address;
+    int nDevices;
+    Serial.println("Scanning...");
+    nDevices = 0;
+    for(address = 1; address < 127; address++ ) {
+      Wire.beginTransmission(address);
+      error = Wire.endTransmission();
+      if (error == 0) {
+        Serial.print("I2C device found at address 0x");
+        if (address<16) {
+          Serial.print("0");
+        }
+        Serial.println(address,HEX);
+        nDevices++;
+      }
+      else if (error==4) {
+        Serial.print("Unknow error at address 0x");
+        if (address<16) {
+          Serial.print("0");
+        }
+        Serial.println(address,HEX);
+      }    
+    }
+    if (nDevices == 0) {
+      Serial.println("No I2C devices found\n");
+      scaning = false;
+    }
+    else {
+      Serial.println("done\n");
+      scaning = false;
+    }
+  }
+
+
+  temperature = bmp.readTemperature();
+  pressure = bmp.readPressure() / 100.0F; // Convert to hPa
 
   if (deviceConnected && pTempCharacteristic->getSubscribedCount() > 0) 
   {
     pTempCharacteristic->setValue(temperature);
     pTempCharacteristic->notify();
-    Serial.printf("BLE Notify : %.2f\n", temperature);
+    pPressionCharacteristic->setValue(pressure);
+    pPressionCharacteristic->notify();
+    Serial.printf("BLE Notify : %.2f °C, %.2f hPa\n", temperature, pressure);
   }
 
   delay(2000);
