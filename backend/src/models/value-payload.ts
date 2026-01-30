@@ -1,4 +1,4 @@
 export interface ValuePayload {
-  value: number;
+  value: number | boolean;
   timestamp: Date;
 }

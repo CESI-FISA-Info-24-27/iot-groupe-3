@@ -15,6 +15,7 @@ export function getCurrent(req: Request, res: Response) {
 
 // REST: POST /light/toggle
 export function toggleLight(req: Request, res: Response) {
+  console.log("Toggling light state backend");
   currentLightState = !currentLightState;
   updateCurrent(currentLightState);
 

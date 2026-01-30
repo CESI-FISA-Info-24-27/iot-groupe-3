@@ -1,14 +1,14 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import {
   ComponentFixture,
   TestBed,
+  discardPeriodicTasks,
   fakeAsync,
   tick,
-  discardPeriodicTasks,
 } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
 
 import { AnalyticsComponent } from './analytics.component';
 
