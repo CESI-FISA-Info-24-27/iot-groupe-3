@@ -6,6 +6,13 @@
 
 /* ===================== DEFINES ===================== */
 #define BUILTIN_LED 2
+#define BROCHE_MICRO 36
+
+#define ADC_MAX 4095
+#define VREF 3.3
+#define SAMPLE_COUNT 500
+#define REF_VOLTAGE 0.01  // référence arbitraire pour calculer les dB relatifs
+
 
 #define BMP_SDA 21
 #define BMP_SCL 22
@@ -13,6 +20,7 @@
 #define SERVICE_ENV_UUID        "0d57fddd-b6d0-458d-a9e3-ede9919198d4"
 #define CHAR_TEMP_UUID          "f1047d07-53c8-4877-9c5f-29f7161c516d"
 #define CHAR_PRESSION_UIID      "79d4a577-2f8e-4b44-922a-b807b600eb80"
+#define CHAR_SOUND_UUID         "cf5e24c5-9d6e-48bb-b256-bf0fdbfe0e05"
 
 #define SERVICE_AUTOMATION_UUID "e4115b34-f55b-4e7b-9313-028bfcc5285f"
 #define CHAR_LED_UUID           "3e92916e-15bd-4a65-abbd-b60b07b4e064"
@@ -22,6 +30,7 @@
 /* ===================== GLOBALS ===================== */
 float temperature = 20.0;
 float pressure = 00.0;
+unsigned int sample;
 bool deviceConnected = false;
 bool scaning = true;
 
@@ -32,6 +41,7 @@ NimBLEService* pEnvService = nullptr;
 NimBLEService* pAutomationService = nullptr;
 NimBLECharacteristic* pTempCharacteristic = nullptr;
 NimBLECharacteristic* pPressionCharacteristic = nullptr;
+NimBLECharacteristic* pSoundCharacteristic = nullptr;
 NimBLECharacteristic* pLEDCharacteristic = nullptr;
 
 /* ===================== CALLBACKS ===================== */
@@ -73,6 +83,24 @@ class LEDCallbacks : public NimBLECharacteristicCallbacks
   }
 };
 
+float readMicRMS()
+{
+  long sum = 0;
+  long sumSquares = 0;
+
+  for (int i = 0; i < SAMPLE_COUNT; i++) {
+    int sample = analogRead(BROCHE_MICRO);
+    sum += sample;
+    sumSquares += (long)sample * sample;
+    delayMicroseconds(100); // ≈10kHz
+  }
+
+  float mean = sum / (float)SAMPLE_COUNT;
+  float rms = sqrt((sumSquares / (float)SAMPLE_COUNT) - (mean * mean));
+
+  return rms;
+}
+
 
 
 /* ===================== SETUP ===================== */
@@ -106,7 +134,6 @@ void setup()
   pAutomationService = pServer->createService(SERVICE_AUTOMATION_UUID);
 
 
-
   /* Température */
   pTempCharacteristic = pEnvService->createCharacteristic(
     CHAR_TEMP_UUID,
@@ -117,6 +144,13 @@ void setup()
 
   pPressionCharacteristic = pEnvService->createCharacteristic(
     CHAR_PRESSION_UIID,
+    NIMBLE_PROPERTY::READ |
+    NIMBLE_PROPERTY::NOTIFY |
+    NIMBLE_PROPERTY::INDICATE
+  );
+
+  pSoundCharacteristic = pEnvService->createCharacteristic(
+    CHAR_SOUND_UUID,
     NIMBLE_PROPERTY::READ |
     NIMBLE_PROPERTY::NOTIFY |
     NIMBLE_PROPERTY::INDICATE
@@ -161,6 +195,10 @@ void setup()
 
 void loop() 
 {
+  float adcRMS = readMicRMS();
+  float voltsRMS = (adcRMS / ADC_MAX) * VREF;
+
+  float dB = 20.0 * log10(voltsRMS / REF_VOLTAGE);
 
   if(scaning)
   {
@@ -197,9 +235,10 @@ void loop()
     }
   }
 
-
   temperature = bmp.readTemperature();
   pressure = bmp.readPressure() / 100.0F; // Convert to hPa
+  sample = analogRead(BROCHE_MICRO);
+
 
   if (deviceConnected && pTempCharacteristic->getSubscribedCount() > 0) 
   {
@@ -207,7 +246,9 @@ void loop()
     pTempCharacteristic->notify();
     pPressionCharacteristic->setValue(pressure);
     pPressionCharacteristic->notify();
-    Serial.printf("BLE Notify : %.2f °C, %.2f hPa\n", temperature, pressure);
+    pSoundCharacteristic->setValue(dB);
+    pSoundCharacteristic->notify();
+    Serial.printf("BLE Notify : %.2f °C, %.2f hPa, sound level = %.2f \n", temperature, pressure, dB);
   }
 
   delay(2000);
