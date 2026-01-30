@@ -26,7 +26,7 @@ export class LightService {
   }
 
   toggleLight(): void {
-    this.http.post<ValuePayload>(`${BASE_BACKEND_URL}/light/toggle`, {});
+    this.http.post<ValuePayload>(`${BASE_BACKEND_URL}/light/toggle`, {}).subscribe();
   }
 
   getCurrentLightState(): boolean {

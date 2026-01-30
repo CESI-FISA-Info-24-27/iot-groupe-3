@@ -21,7 +21,7 @@ export class HumidityService {
       this.humidityValues.update((values) => [
         ...values,
         {
-          humidity: newCurrentHumidity.value,
+          humidity: newCurrentHumidity.value as number,
           timestamp: new Date(newCurrentHumidity.timestamp),
         },
       ]);
@@ -29,7 +29,7 @@ export class HumidityService {
 
     socket.on('humidity:average', (newAverageHumidity: ValuePayload) => {
       this.averageRoomHumidity.set({
-        humidity: newAverageHumidity.value,
+        humidity: newAverageHumidity.value as number,
         timestamp: new Date(newAverageHumidity.timestamp),
       });
     });

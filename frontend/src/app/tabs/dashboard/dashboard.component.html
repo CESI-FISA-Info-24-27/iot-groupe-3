@@ -1,3 +1,46 @@
 <app-header />
 <div id="header-anchor"></div>
-<ion-content> <p>hey</p></ion-content>
+<ion-content>
+  <div class="general-container">
+    <div class="dashboard-container">
+      <div class="welcome-message">
+        <h1>Bienvenue sur votre dashboard CESIGuard.</h1>
+      </div>
+
+      <div class="cards-grid">
+        <!-- Temperature Card -->
+        <div class="card temperature-card">
+          <div class="card-title">Température</div>
+          <div class="card-value temperature-value">
+            {{ currentTemperature() }} °C
+          </div>
+        </div>
+
+        <!-- Humidity Card -->
+        <div class="card humidity-card">
+          <div class="card-title">Humidité</div>
+          <div class="card-value humidity-value">{{ currentHumidity() }} %</div>
+        </div>
+
+        <!-- Motion Card -->
+        <div class="card motion-card">
+          <div class="card-title">Mouvement</div>
+          <div
+            class="card-value motion-value"
+            [class.detected]="motionDetected()"
+          >
+            {{ motionDetected() ? "Détecté" : "Aucun" }}
+          </div>
+        </div>
+
+        <!-- Light Card -->
+        <div class="card light-card">
+          <div class="card-title">Lumière</div>
+          <div class="light-toggle-wrapper" (click)="onLightStateChange()">
+            <app-toggle-light [lightState]="lightState()" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
