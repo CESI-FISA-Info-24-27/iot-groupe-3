@@ -90,6 +90,14 @@
   @include orange-red-hue;
 }
 
+.pressure-value {
+  @include purple-pink-hue;
+}
+
+.sound-value {
+  @include cyan-blue-hue;
+}
+
 .motion-value {
   @include red-hue;
   font-size: 24px;

@@ -6,6 +6,8 @@ import { TemperatureService } from 'src/app/shared/services/temperature-service'
 import { HumidityService } from 'src/app/shared/services/humidity-service';
 import { MotionService } from 'src/app/shared/services/motion-service';
 import { LightService } from 'src/app/shared/services/light-service';
+import { PressureService } from 'src/app/shared/services/pressure-service';
+import { SoundService } from 'src/app/shared/services/sound-service';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,6 +20,8 @@ export class DashboardComponent {
   private humidityService = inject(HumidityService);
   private motionService = inject(MotionService);
   private lightService = inject(LightService);
+  private pressureService = inject(PressureService);
+  private soundService = inject(SoundService);
 
   currentTemperature = computed(
     () =>
@@ -30,6 +34,17 @@ export class DashboardComponent {
     () =>
       this.humidityService.humidityValues().at(-1)?.humidity?.toFixed(1) ??
       '--',
+  );
+
+  currentPressure = computed(
+    () =>
+      this.pressureService.pressureValues().at(-1)?.pressure?.toFixed(1) ??
+      '--',
+  );
+
+  currentSound = computed(
+    () =>
+      this.soundService.soundValues().at(-1)?.sound?.toFixed(1) ?? '--',
   );
 
   motionState = computed(() => this.motionService.motionValues().at(-1));

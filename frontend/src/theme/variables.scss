@@ -4,6 +4,10 @@ $main-light-blue: #24c7d3;
 $main-light-green: #6dd55d;
 $main-orange: #f59e0b;
 $main-red: #ef4444;
+$main-purple: #8b5cf6;
+$main-pink: #ec4899;
+$main-cyan: #29c8e4;
+$main-blue: #3b82f6;
 
 .main-button-color {
   --color-selected: #{$main-light-blue};
@@ -41,6 +45,32 @@ $main-red: #ef4444;
   background-clip: text;
   color: transparent;
   animation: gradient-slide 5s ease-in-out infinite;
+}
+
+@mixin purple-pink-hue {
+  background: linear-gradient(
+    90deg,
+    #{$main-purple},
+    #{$main-pink},
+    #{$main-purple}
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-slide 7s ease-in-out infinite;
+}
+
+@mixin cyan-blue-hue {
+  background: linear-gradient(
+    90deg,
+    #{$main-cyan},
+    #{$main-blue},
+    #{$main-cyan}
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-slide 6.5s ease-in-out infinite;
 }
 
 @keyframes gradient-slide {
