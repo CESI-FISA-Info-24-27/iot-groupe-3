@@ -1,1 +1,3 @@
-export const BASE_BACKEND_URL = 'http://localhost:3000';
+import { environment } from '../../../environments/environment';
+
+export const BASE_BACKEND_URL = environment.apiUrl;

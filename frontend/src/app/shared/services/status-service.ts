@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
+import { BASE_BACKEND_URL } from '../models/request-parameters.model';
 import { STATUS } from '../models/status.model';
 
 @Injectable({
@@ -18,7 +19,7 @@ export class StatusService {
   }
 
   private checkBackendStatus(): void {
-    this.http.get('http://localhost:3000/', { observe: 'response' }).subscribe({
+    this.http.get(BASE_BACKEND_URL, { observe: 'response' }).subscribe({
       next: (response) => {
         if (response.status === 200) {
           this.status.set(STATUS.ONLINE);
