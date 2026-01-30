@@ -84,6 +84,7 @@ jobs:
   # ========================================
   # Job : Déploiement sur le serveur
   # ========================================
+
   deploy:
     name: Deploy Frontend to Server
     runs-on: ubuntu-latest
