@@ -48,6 +48,16 @@
   }
 }
 
+.pressure-value {
+  @include purple-pink-hue;
+  font-weight: 600;
+}
+
+.sound-value {
+  @include cyan-blue-hue;
+  font-weight: 600;
+}
+
 .category {
   display: flex;
   flex-direction: column;

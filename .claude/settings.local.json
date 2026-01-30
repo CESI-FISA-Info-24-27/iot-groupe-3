@@ -3,7 +3,9 @@
     "allow": [
       "Bash(where convert magick inkscape)",
       "Bash(cd \"c:\\\\Users\\\\xavie\\\\OneDrive\\\\Documents\\\\CESI\\\\4e année\\\\iot\\\\iot-groupe-3\\\\frontend\\\\src\\\\app\"\" && find . -type f -name \"*.ts \")",
-      "Bash(npx ng build:*)"
+      "Bash(npx ng build:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)"
     ]
   }
 }

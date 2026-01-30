@@ -19,6 +19,14 @@
           Son :
           <span class="sensor-value sound" [class.pending]="isNaN(averageSound())">{{ isNaN(averageSound()) ? '...' : averageSound() + ' dB' }}</span>
         </p>
+        <p>
+          Pression :
+          <span class="pressure-value">{{ averagePressure() }} hPa</span>
+        </p>
+        <p>
+          Son :
+          <span class="sound-value">{{ averageSound() }} dB</span>
+        </p>
       </div>
     </div>
     <div>
@@ -39,6 +47,14 @@
         <p>
           Son :
           <span class="sensor-value sound" [class.pending]="isNaN(currentSound())">{{ isNaN(currentSound()) ? '...' : currentSound() + ' dB' }}</span>
+        </p>
+        <p>
+          Pression :
+          <span class="pressure-value">{{ currentPressure() }} hPa</span>
+        </p>
+        <p>
+          Son :
+          <span class="sound-value">{{ currentSound() }} dB</span>
         </p>
       </div>
     </div>
