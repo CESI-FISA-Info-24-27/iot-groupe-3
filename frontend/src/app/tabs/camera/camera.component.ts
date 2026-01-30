@@ -18,7 +18,7 @@ import { ToggleLightComponent } from './toggle-light/toggle-light.component';
   ],
 })
 export class CameraComponent {
-  streamUrl = 'https://camera.cesiguard.loicserre.fr/stream.html?src=esp32cam';
+  streamUrl = 'https://camera.cesiguard.loicserre.fr/api/stream.mjpeg?src=esp32cam';
   lightService = inject(LightService);
   motionService = inject(MotionService);
   streamLoaded = signal<boolean>(false);

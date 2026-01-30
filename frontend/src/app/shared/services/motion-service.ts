@@ -17,7 +17,7 @@ export class MotionService {
       this.motionValues.update((values) => [
         ...values,
         {
-          motionDetected: newCurrentMotion.value === 1,
+          motionDetected: newCurrentMotion.value as boolean,
           timestamp: new Date(newCurrentMotion.timestamp),
         },
       ]);

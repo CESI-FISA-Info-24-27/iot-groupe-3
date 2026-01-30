@@ -7,7 +7,19 @@ let currentMotionState = false;
 // REST: GET /motion/current
 export function getCurrent(req: Request, res: Response) {
   const payload: ValuePayload = {
-    value: currentMotionState ? 1 : 0,
+    value: currentMotionState,
+    timestamp: new Date(),
+  };
+  res.json(payload);
+}
+
+// REST: POST /motion/toggle
+export function toggleMotion(req: Request, res: Response) {
+  currentMotionState = !currentMotionState;
+  updateCurrent(currentMotionState);
+
+  const payload: ValuePayload = {
+    value: currentMotionState,
     timestamp: new Date(),
   };
   res.json(payload);
@@ -18,7 +30,7 @@ export function updateCurrent(newValue: boolean) {
   currentMotionState = newValue;
 
   const payload: ValuePayload = {
-    value: currentMotionState ? 1 : 0,
+    value: currentMotionState,
     timestamp: new Date(),
   };
 

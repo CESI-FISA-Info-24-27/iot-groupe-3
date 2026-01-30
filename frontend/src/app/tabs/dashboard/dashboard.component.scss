@@ -1,0 +1,125 @@
+@use "../../../theme/variables.scss" as *;
+
+.general-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  width: 100%;
+}
+
+.dashboard-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.welcome-message {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+  padding-bottom: 5px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 300px;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      $main-light-blue,
+      $main-light-green,
+      $main-light-blue
+    );
+    background-size: 300% 100%;
+    animation: gradient-slide 8s ease-in-out infinite;
+    border-radius: 2px;
+  }
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+.card {
+  background-color: rgba(50, 50, 50);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 150px;
+  backdrop-filter: blur(10px);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+
+.card-value {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.temperature-value {
+  @include blue-green-hue;
+}
+
+.humidity-value {
+  @include orange-red-hue;
+}
+
+.motion-value {
+  @include red-hue;
+  font-size: 24px;
+
+  &.detected {
+    @include blue-green-hue;
+  }
+}
+
+.light-toggle-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+
+  ::ng-deep app-toggle-light .toggle-container {
+    background-color: rgba(30, 30, 30, 0.8);
+  }
+}
+
+@media (min-width: 768px) {
+  .welcome-message h1 {
+    font-size: 32px;
+  }
+
+  .cards-grid {
+    gap: 20px;
+  }
+
+  .card {
+    min-height: 180px;
+  }
+}

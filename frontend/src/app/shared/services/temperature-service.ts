@@ -21,7 +21,7 @@ export class TemperatureService {
       this.temperatureValues.update((values) => [
         ...values,
         {
-          temperature: newCurrentTemperature.value,
+          temperature: newCurrentTemperature.value as number,
           timestamp: new Date(newCurrentTemperature.timestamp),
         },
       ]);
@@ -29,7 +29,7 @@ export class TemperatureService {
 
     socket.on('temperature:average', (newAverageTemperature: ValuePayload) => {
       this.averageRoomTemperature.set({
-        temperature: newAverageTemperature.value,
+        temperature: newAverageTemperature.value as number,
         timestamp: new Date(newAverageTemperature.timestamp),
       });
     });
