@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 import app from "./app";
@@ -12,7 +15,7 @@ const httpServer = http.createServer(app);
 
 export const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: "http://localhost:8100",
+    origin: process.env.FRONTEND_URL || "http://localhost:8100",
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true,
