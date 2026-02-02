@@ -1,41 +1,23 @@
 import { Router } from "express";
-import { getCurrent, toggleLight } from "../controllers/light.controller";
+import { getCurrent } from "../controllers/light.controller";
 const lightRouter = Router();
 
 /**
  * @swagger
  * /light/current:
  *   get:
- *     summary: Get current light status
- *     description: Returns the current light state (value is 1 for ON, 0 for OFF)
+ *     summary: Get current light sensor status
+ *     description: Returns the current light sensor state (value is 1 for light detected, 0 for dark). This is a read-only value from the light sensor.
  *     tags:
  *       - Light
  *     responses:
  *       200:
- *         description: Current light status
+ *         description: Current light sensor status
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ValuePayload'
  */
 lightRouter.get("/current", getCurrent);
-
-/**
- * @swagger
- * /light/toggle:
- *   post:
- *     summary: Toggle light state
- *     description: Switches the light on or off (returns value 1 for ON, 0 for OFF)
- *     tags:
- *       - Light
- *     responses:
- *       200:
- *         description: Light toggled successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ValuePayload'
- */
-lightRouter.post("/toggle", toggleLight);
 
 export default lightRouter;

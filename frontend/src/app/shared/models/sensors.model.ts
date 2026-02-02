@@ -14,3 +14,11 @@ export interface LightInfo {
   lightOn: boolean;
   timestamp: Date;
 }
+export interface PressureInfo {
+  pressure: number;
+  timestamp: Date;
+}
+export interface SoundInfo {
+  sound: number;
+  timestamp: Date;
+}

@@ -39,10 +39,28 @@
   align-items: center;
   text-align: center;
 }
+
+.light-container {
+  border-radius: 8px;
+  background: rgba(50, 50, 50);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
 .no-motion {
   @include red-hue;
 }
 
 .motion {
+  @include blue-green-hue;
+}
+
+.light-off {
+  @include red-hue;
+}
+
+.light-on {
   @include blue-green-hue;
 }

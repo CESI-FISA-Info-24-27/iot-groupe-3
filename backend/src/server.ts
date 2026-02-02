@@ -4,10 +4,7 @@ dotenv.config();
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 import app from "./app";
-import { startHumidityDemo } from "./controllers/humidity.controller";
-import { startTemperatureDemo } from "./controllers/temperature.controller";
-import { startLightDemo } from "./controllers/light.controller";
-import { startMotionDemo } from "./controllers/motion.controller";
+import { connectToMQTT } from "./services/mqtt.service";
 
 const PORT = 3000;
 
@@ -27,10 +24,8 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => console.log("Socket disconnected:", socket.id));
 });
 
-startTemperatureDemo();
-startHumidityDemo();
-startLightDemo();
-startMotionDemo();
+// Connect to MQTT broker and receive real sensor data
+connectToMQTT();
 
 httpServer.listen(PORT, () =>
   console.log(`Server listening on http://localhost:${PORT}`),

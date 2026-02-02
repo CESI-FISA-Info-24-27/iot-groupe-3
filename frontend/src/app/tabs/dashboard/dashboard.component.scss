@@ -27,6 +27,25 @@
     font-weight: 600;
     color: white;
   }
+}
+
+.section-container {
+  margin-bottom: 30px;
+  width: 100%;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+  padding-bottom: 10px;
 
   &::after {
     content: "";
@@ -34,8 +53,8 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 80%;
-    max-width: 300px;
+    width: 60%;
+    max-width: 200px;
     height: 3px;
     background: linear-gradient(
       90deg,
@@ -51,9 +70,16 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   width: 100%;
+}
+
+.numeric-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.boolean-grid {
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .card {
@@ -67,6 +93,9 @@
   gap: 16px;
   min-height: 150px;
   backdrop-filter: blur(10px);
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 100%;
 }
 
 .card-title {
@@ -90,6 +119,14 @@
   @include orange-red-hue;
 }
 
+.pressure-value {
+  @include purple-pink-hue;
+}
+
+.sound-value {
+  @include cyan-blue-hue;
+}
+
 .motion-value {
   @include red-hue;
   font-size: 24px;
@@ -99,20 +136,22 @@
   }
 }
 
-.light-toggle-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  cursor: pointer;
+.light-value {
+  @include red-hue;
+  font-size: 24px;
 
-  ::ng-deep app-toggle-light .toggle-container {
-    background-color: rgba(30, 30, 30, 0.8);
+  &.light-on {
+    @include blue-green-hue;
   }
 }
 
 @media (min-width: 768px) {
   .welcome-message h1 {
     font-size: 32px;
+  }
+
+  .section-title {
+    font-size: 24px;
   }
 
   .cards-grid {

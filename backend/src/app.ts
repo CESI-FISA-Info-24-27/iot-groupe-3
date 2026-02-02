@@ -5,6 +5,8 @@ import statusRouter from "./routes/status";
 import temperatureRouter from "./routes/temperature";
 import lightRouter from "./routes/light";
 import motionRouter from "./routes/motion";
+import pressureRouter from "./routes/pressure";
+import soundRouter from "./routes/sound";
 import { setupSwagger } from "./swagger";
 const app = express();
 
@@ -23,6 +25,8 @@ app.use("/temperature", temperatureRouter);
 app.use("/humidity", humidityRouter);
 app.use("/light", lightRouter);
 app.use("/motion", motionRouter);
+app.use("/pressure", pressureRouter);
+app.use("/sound", soundRouter);
 
 app.use("/", statusRouter);
 

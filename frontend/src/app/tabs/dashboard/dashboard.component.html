@@ -7,37 +7,62 @@
         <h1>Bienvenue sur votre dashboard CESIGuard.</h1>
       </div>
 
-      <div class="cards-grid">
-        <!-- Temperature Card -->
-        <div class="card temperature-card">
-          <div class="card-title">Température</div>
-          <div class="card-value temperature-value">
-            {{ currentTemperature() }} °C
+      <!-- Section des valeurs numériques -->
+      <div class="section-container">
+        <h2 class="section-title">Valeurs numériques</h2>
+        <div class="cards-grid numeric-grid">
+          <!-- Temperature Card -->
+          <div class="card temperature-card">
+            <div class="card-title">Température</div>
+            <div class="card-value temperature-value">
+              {{ currentTemperature() }} °C
+            </div>
+          </div>
+
+          <!-- Humidity Card -->
+          <div class="card humidity-card">
+            <div class="card-title">Humidité</div>
+            <div class="card-value humidity-value">{{ currentHumidity() }} %</div>
+          </div>
+
+          <!-- Pressure Card -->
+          <div class="card pressure-card">
+            <div class="card-title">Pression</div>
+            <div class="card-value pressure-value">{{ currentPressure() }} hPa</div>
+          </div>
+
+          <!-- Sound Card -->
+          <div class="card sound-card">
+            <div class="card-title">Son</div>
+            <div class="card-value sound-value">{{ currentSound() }} dB</div>
           </div>
         </div>
+      </div>
 
-        <!-- Humidity Card -->
-        <div class="card humidity-card">
-          <div class="card-title">Humidité</div>
-          <div class="card-value humidity-value">{{ currentHumidity() }} %</div>
-        </div>
-
-        <!-- Motion Card -->
-        <div class="card motion-card">
-          <div class="card-title">Mouvement</div>
-          <div
-            class="card-value motion-value"
-            [class.detected]="motionDetected()"
-          >
-            {{ motionDetected() ? "Détecté" : "Aucun" }}
+      <!-- Section des capteurs booléens -->
+      <div class="section-container">
+        <h2 class="section-title">Capteurs</h2>
+        <div class="cards-grid boolean-grid">
+          <!-- Motion Card -->
+          <div class="card motion-card">
+            <div class="card-title">Mouvement</div>
+            <div
+              class="card-value motion-value"
+              [class.detected]="motionDetected()"
+            >
+              {{ motionDetected() ? "Détecté" : "Aucun" }}
+            </div>
           </div>
-        </div>
 
-        <!-- Light Card -->
-        <div class="card light-card">
-          <div class="card-title">Lumière</div>
-          <div class="light-toggle-wrapper" (click)="onLightStateChange()">
-            <app-toggle-light [lightState]="lightState()" />
+          <!-- Light Card -->
+          <div class="card light-card">
+            <div class="card-title">Capteur de lumière</div>
+            <div
+              class="card-value light-value"
+              [class.light-on]="lightState().lightOn"
+            >
+              {{ lightState().lightOn ? "Allumé" : "Éteint" }}
+            </div>
           </div>
         </div>
       </div>
