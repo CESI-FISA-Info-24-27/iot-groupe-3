@@ -2,6 +2,8 @@ import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.0",
@@ -10,12 +12,23 @@ const options: swaggerJsdoc.Options = {
       version: "1.0.0",
       description: "API documentation for CESIGuard backend",
     },
-    servers: [
-      {
-        url: "http://localhost:3000",
-        description: "Development server",
-      },
-    ],
+    servers: isDevelopment
+      ? [
+          {
+            url: "http://localhost:3000",
+            description: "Development server",
+          },
+        ]
+      : [
+          {
+            url: "https://api.cesiguard.loicserre.fr",
+            description: "Production server",
+          },
+          {
+            url: "http://localhost:3000",
+            description: "Development server",
+          },
+        ],
     components: {
       schemas: {
         ValuePayload: {
@@ -67,6 +80,9 @@ const options: swaggerJsdoc.Options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 export const setupSwagger = (app: Express): void => {
+  const baseUrl = isDevelopment
+    ? "http://localhost:3000"
+    : "https://api.cesiguard.loicserre.fr";
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  console.log("Swagger documentation available at /api-docs");
+  console.log(`Swagger documentation available at ${baseUrl}/api-docs`);
 };
