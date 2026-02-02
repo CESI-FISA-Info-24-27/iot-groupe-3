@@ -2,7 +2,10 @@ name: CD Backend - Déploiement automatique
 
 # Déclenchement après succès du CI OU manuellement
 on:
-  push:
+  workflow_run:
+    workflows: ["CI EcoGuard IoT"]
+    types:
+      - completed
     branches:
       - main
   workflow_dispatch:
