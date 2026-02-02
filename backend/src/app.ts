@@ -16,10 +16,7 @@ app.use(
 );
 app.use(express.json());
 
-<<<<<<< Updated upstream
 // Setup Swagger documentation
-=======
->>>>>>> Stashed changes
 setupSwagger(app);
 
 app.use("/temperature", temperatureRouter);
