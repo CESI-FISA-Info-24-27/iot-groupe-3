@@ -4,21 +4,15 @@ import { HeaderComponent } from 'src/app/shared/components/header/header.compone
 import { SpinnerComponent } from 'src/app/shared/components/spinner/spinner.component';
 import { LightService } from 'src/app/shared/services/light-service';
 import { MotionService } from 'src/app/shared/services/motion-service';
-import { ToggleLightComponent } from './toggle-light/toggle-light.component';
 
 @Component({
   selector: 'app-camera',
   templateUrl: './camera.component.html',
   styleUrls: ['./camera.component.scss'],
-  imports: [
-    IonContent,
-    HeaderComponent,
-    SpinnerComponent,
-    ToggleLightComponent,
-  ],
+  imports: [IonContent, HeaderComponent, SpinnerComponent],
 })
 export class CameraComponent {
-  streamUrl = 'https://camera.cesiguard.loicserre.fr/api/stream.mjpeg?src=esp32cam';
+  streamUrl = 'http://77.222.181.11:8080/mjpg/video.mjpg';
   lightService = inject(LightService);
   motionService = inject(MotionService);
   streamLoaded = signal<boolean>(false);
@@ -37,6 +31,10 @@ export class CameraComponent {
     this.motionState()?.motionDetected ? 'motion' : 'no-motion',
   );
 
+  lightClass = computed(() =>
+    this.lightState().lightOn ? 'light-on' : 'light-off',
+  );
+
   constructor() {}
 
   onStreamLoad(): void {
@@ -45,9 +43,5 @@ export class CameraComponent {
 
   onStreamError(): void {
     this.streamLoaded.set(false);
-  }
-
-  onLightStateChange(): void {
-    this.lightService.toggleLight();
   }
 }

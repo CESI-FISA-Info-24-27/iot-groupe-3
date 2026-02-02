@@ -35,18 +35,24 @@
   <div class="section-title mt-20 mb-10">Évènements de la salle</div>
 
   <div class="table-container">
-    <table>
-      <tr>
-        <th>Évènement</th>
-        <th>Heure</th>
-      </tr>
-      @for (event of lastEvents(); track $index) {
+    @if (lastEvents().length === 0) {
+      <div class="no-events-message">
+        <p>Aucun évènement détecté pour le moment.</p>
+      </div>
+    } @else {
+      <table>
         <tr>
-          <td>{{ event.type }}</td>
-          <td>{{ event.timestamp | date: "HH:mm" }}</td>
+          <th>Évènement</th>
+          <th>Heure</th>
         </tr>
-      }
-    </table>
+        @for (event of lastEvents(); track $index) {
+          <tr>
+            <td>{{ event.type }}</td>
+            <td>{{ event.timestamp | date: "HH:mm" }}</td>
+          </tr>
+        }
+      </table>
+    }
   </div>
   <div (click)="downloadCSV()">
     <div class="ion-activatable ripple-parent mt-20">

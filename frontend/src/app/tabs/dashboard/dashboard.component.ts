@@ -1,7 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { IonContent } from '@ionic/angular/standalone';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
-import { ToggleLightComponent } from '../camera/toggle-light/toggle-light.component';
 import { TemperatureService } from 'src/app/shared/services/temperature-service';
 import { HumidityService } from 'src/app/shared/services/humidity-service';
 import { MotionService } from 'src/app/shared/services/motion-service';
@@ -13,7 +12,7 @@ import { SoundService } from 'src/app/shared/services/sound-service';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  imports: [IonContent, HeaderComponent, ToggleLightComponent],
+  imports: [IonContent, HeaderComponent],
 })
 export class DashboardComponent {
   private temperatureService = inject(TemperatureService);
@@ -58,8 +57,4 @@ export class DashboardComponent {
   );
 
   motionDetected = computed(() => this.motionState()?.motionDetected ?? false);
-
-  onLightStateChange(): void {
-    this.lightService.toggleLight();
-  }
 }

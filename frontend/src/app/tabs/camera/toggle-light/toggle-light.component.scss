@@ -1,86 +1,53 @@
 @use "../../../../theme/variables.scss" as *;
 
-.toggle-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  user-select: none;
-  background: rgba(50, 50, 50);
-  padding: 12px 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  width: fit-content;
-}
-
-.toggle-track {
-  width: 64px;
-  height: 32px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border-radius: 16px;
-  padding: 3px;
-  transition: background 0.4s ease;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-
-  &.active {
-    background: linear-gradient(
-      135deg,
-      #{$main-light-blue} 0%,
-      #{$main-light-green} 100%
-    );
-  }
-}
-
-.toggle-thumb {
-  width: 26px;
-  height: 26px;
-  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
-  border-radius: 50%;
+.light-sensor-display {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition:
-    transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55),
-    background 0.4s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  position: relative;
+  gap: 12px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  user-select: none;
+  transition: all 0.4s ease;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 
-  &.active {
-    transform: translateX(32px);
-    background: linear-gradient(135deg, #fff9e6 0%, #fffacd 100%);
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+  &.light-on {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 193, 7, 0.3) 0%,
+      rgba(255, 152, 0, 0.3) 100%
+    );
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
   }
 }
 
 .icon {
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  transition:
-    opacity 0.3s ease,
-    transform 0.4s ease;
-  opacity: 0;
-  transform: scale(0.5) rotate(-180deg);
+  width: 28px;
+  height: 28px;
+  transition: all 0.4s ease;
 
-  &.active {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
+  .light-sensor-display.light-on & {
+    color: #{$main-orange};
+    filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.6));
+  }
+
+  .light-sensor-display:not(.light-on) & {
+    color: #8899aa;
   }
 }
 
-.sun {
-  color: #{$main-orange};
-}
+.light-label {
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.4s ease;
 
-.moon {
-  color: #c0c0c0;
-  fill: #c0c0c0;
-}
+  .light-sensor-display.light-on & {
+    color: #ffb300;
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  }
 
-.toggle-label {
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
-  min-width: 60px;
+  .light-sensor-display:not(.light-on) & {
+    color: rgba(255, 255, 255, 0.7);
+  }
 }

@@ -24,7 +24,7 @@ const options: swaggerJsdoc.Options = {
             value: {
               oneOf: [{ type: "number" }, { type: "boolean" }],
               description:
-                "Sensor value (temperature in Celsius, humidity as percentage, light state as boolean, motion detected as boolean)",
+                "Sensor value (temperature in Celsius, humidity as percentage, light sensor state as boolean - true for light detected, motion detected as boolean)",
               example: 23.5,
             },
             timestamp: {

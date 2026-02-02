@@ -25,10 +25,11 @@
             }}
           </div>
         </div>
-        <app-toggle-light
-          [lightState]="lightState()"
-          (click)="onLightStateChange()"
-        />
+        <div class="light-container">
+          <div [class]="lightClass()">
+            {{ lightState().lightOn ? "Lumière allumée" : "Lumière éteinte" }}
+          </div>
+        </div>
       </div>
     }
   </div>
