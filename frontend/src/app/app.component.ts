@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  alertCircleOutline,
   analyticsOutline,
+  checkmarkCircleOutline,
   ellipse,
   gridOutline,
   moon,
@@ -29,6 +31,8 @@ export class AppComponent {
       videocamOutline,
       sunny,
       moon,
+      alertCircleOutline,
+      checkmarkCircleOutline,
     });
   }
 }

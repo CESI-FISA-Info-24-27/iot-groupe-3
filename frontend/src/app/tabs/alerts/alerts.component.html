@@ -1,0 +1,97 @@
+<app-header />
+<div id="header-anchor"></div>
+<ion-content>
+  <div class="general-container">
+    <div class="alerts-container">
+      <div class="welcome-message">
+        <h1>Alertes et sécurité</h1>
+      </div>
+
+      <!-- Grid of 4 alerts -->
+      <div class="alerts-grid">
+        <!-- Thermal Comfort Alert -->
+        <div class="alert-card"
+             [class.alert]="!isComfortable(thermalComfort()?.comfort) && !!thermalComfort()?.comfort"
+             [class.ok]="isComfortable(thermalComfort()?.comfort)"
+             [class.pending]="!thermalComfort()?.comfort">
+          <div class="custom-icon"
+               [class.ok]="isComfortable(thermalComfort()?.comfort)"
+               [class.warning]="!isComfortable(thermalComfort()?.comfort) && !!thermalComfort()?.comfort"
+               [class.pending]="!thermalComfort()?.comfort">
+            {{ !thermalComfort()?.comfort ? '?' : (isComfortable(thermalComfort()?.comfort) ? '✓' : '!') }}
+          </div>
+          <div class="alert-content">
+            <h3>Confort thermique</h3>
+            <p class="alert-value">{{ getThermalComfortLabel(thermalComfort()?.comfort) }}</p>
+          </div>
+        </div>
+
+        <!-- Sensors State Alert -->
+        <div class="alert-card"
+             [class.alert]="sensorsHidden() === true"
+             [class.ok]="sensorsHidden() === false"
+             [class.pending]="sensorsHidden() === undefined">
+          <div class="custom-icon"
+               [class.ok]="getAlertState(sensorsHidden()) === 'ok'"
+               [class.warning]="getAlertState(sensorsHidden()) === 'warning'"
+               [class.pending]="getAlertState(sensorsHidden()) === 'pending'">
+            {{ getAlertIcon(sensorsHidden()) }}
+          </div>
+          <div class="alert-content">
+            <h3>État des capteurs</h3>
+            <p class="alert-value">{{ getSensorsLabel(sensorsHidden()) }}</p>
+          </div>
+        </div>
+
+        <!-- Alarm Mode Alert -->
+        <div class="alert-card"
+             [class.alert]="alarmActive() === true"
+             [class.ok]="alarmActive() === false"
+             [class.pending]="alarmActive() === undefined">
+          <div class="custom-icon"
+               [class.ok]="getAlertState(alarmActive()) === 'ok'"
+               [class.warning]="getAlertState(alarmActive()) === 'warning'"
+               [class.pending]="getAlertState(alarmActive()) === 'pending'">
+            {{ getAlertIcon(alarmActive()) }}
+          </div>
+          <div class="alert-content">
+            <h3>Mode alarme</h3>
+            <p class="alert-value">{{ getAlarmLabel(alarmActive()) }}</p>
+            @if (alarmActive() !== undefined) {
+              <ion-button
+                size="small"
+                [color]="alarmActive() ? 'danger' : 'success'"
+                (click)="toggleAlarm()"
+                class="toggle-button"
+              >
+                {{ alarmActive() ? 'Désactiver' : 'Activer' }}
+              </ion-button>
+            }
+          </div>
+        </div>
+
+        <!-- Waste Alert -->
+        <div class="alert-card"
+             [class.alert]="wasteDetected() === true"
+             [class.ok]="wasteDetected() === false"
+             [class.pending]="wasteDetected() === undefined">
+          <div class="custom-icon"
+               [class.ok]="getAlertState(wasteDetected()) === 'ok'"
+               [class.warning]="getAlertState(wasteDetected()) === 'warning'"
+               [class.pending]="getAlertState(wasteDetected()) === 'pending'">
+            {{ getAlertIcon(wasteDetected()) }}
+          </div>
+          <div class="alert-content">
+            <h3>Alerte gaspillage</h3>
+            <p class="alert-value">{{ getWasteLabel(wasteDetected()) }}</p>
+            @if (wasteDetected() === true) {
+              <p class="alert-description">
+                Lumière éteinte mais présence détectée
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

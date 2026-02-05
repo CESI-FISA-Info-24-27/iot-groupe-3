@@ -5,6 +5,10 @@ import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 import app from "./app";
 import { connectToMQTT } from "./services/mqtt.service";
+import { setupAlarmSocket } from "./controllers/alarm.controller";
+import { setupHiddenSensorsSocket } from "./controllers/hidden-sensors.controller";
+import { setupWasteAlertSocket } from "./controllers/waste-alert.controller";
+import { setupThermalComfortSocket } from "./controllers/thermal-comfort.controller";
 
 const PORT = 3000;
 
@@ -23,6 +27,12 @@ io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
   socket.on("disconnect", () => console.log("Socket disconnected:", socket.id));
 });
+
+// Setup socket communication for all controllers
+setupAlarmSocket();
+setupHiddenSensorsSocket();
+setupWasteAlertSocket();
+setupThermalComfortSocket();
 
 // Connect to MQTT broker and receive real sensor data
 connectToMQTT();
