@@ -29,6 +29,20 @@
     </ion-tab-button>
 
     <ion-tab-button
+      tab="alerts"
+      class="main-button-color"
+      [routerLink]="['/alerts']"
+    >
+      <ion-icon
+        name="alert-circle-outline"
+        [class.selected-hue]="selectedTab === 'alerts'"
+      ></ion-icon>
+      <ion-label [class.selected-hue]="selectedTab === 'alerts'"
+        >Alertes</ion-label
+      >
+    </ion-tab-button>
+
+    <ion-tab-button
       tab="analytics"
       class="main-button-color"
       [routerLink]="['/analytics']"
