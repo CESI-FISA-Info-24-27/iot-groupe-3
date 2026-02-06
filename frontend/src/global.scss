@@ -1,42 +1,30 @@
 @use "./theme/variables.scss" as *;
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
-
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
 
-.section-title {
-  width: 100%;
-  text-align: center;
-  font-size: 20px;
-  margin-bottom: 10px;
-  font-size: 20px;
-  font-weight: 600;
-  color: white;
+// CSS Variables
+:root {
+  --bg-dark: rgba(50, 50, 50);
+  --bg-darker: rgba(40, 40, 40, 0.95);
+  --bg-darkest: rgba(60, 60, 60, 0.95);
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --container-max-width: 1200px;
+}
+
+// Mixins
+@mixin gradient-underline {
   position: relative;
   padding-bottom: 10px;
-  margin-bottom: 15px;
 
   &::after {
     content: "";
@@ -57,4 +45,138 @@
     animation: gradient-slide 8s ease-in-out infinite;
     border-radius: 2px;
   }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin dark-card {
+  background-color: var(--bg-dark);
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(10px);
+}
+
+// Layout
+.container {
+  padding: 20px;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.flex-center {
+  @include flex-center;
+}
+
+.flex-col-center {
+  @include flex-center;
+  flex-direction: column;
+  min-height: 100%;
+  width: 100%;
+}
+
+// Typography
+.section-title {
+  @include gradient-underline;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+.page-title {
+  @include gradient-underline;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  margin-bottom: 30px;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.page-title-no-underline {
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  margin-bottom: 30px;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+// Cards
+.card {
+  @include dark-card;
+  padding: 20px;
+}
+
+.card-grid {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    gap: 20px;
+  }
+}
+
+.card-grid-2 {
+  @extend .card-grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+// Sensor values
+.sensor-value {
+  font-weight: 600;
+
+  &.temperature {
+    @include blue-green-hue;
+  }
+  &.humidity {
+    @include orange-red-hue;
+  }
+  &.pressure {
+    @include purple-pink-hue;
+  }
+  &.sound {
+    @include cyan-blue-hue;
+  }
+}
+
+// State classes
+.state-ok {
+  @include blue-green-hue;
+}
+.state-error {
+  @include red-hue;
+}
+.state-warning {
+  @include orange-red-hue;
+}
+
+// Utilities
+.m-0 {
+  margin: 0;
+}
+.mt-20 {
+  margin-top: 20px;
+}
+.mb-10 {
+  margin-bottom: 10px;
+}
+.mb-30 {
+  margin-bottom: 30px;
 }

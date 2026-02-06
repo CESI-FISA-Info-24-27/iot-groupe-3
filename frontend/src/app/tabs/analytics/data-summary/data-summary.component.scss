@@ -1,14 +1,12 @@
 @use "../../../../theme/variables.scss" as *;
 
 .data-summary {
+  @include dark-card;
   width: 100%;
-  background-color: rgba(50, 50, 50);
-  border-radius: 10px;
   margin-bottom: 10px;
 
   .categories {
     display: flex;
-    flex-direction: row;
 
     > div {
       flex: 1;
@@ -23,45 +21,22 @@
 
 .category-title {
   font-size: 18px;
-  margin: 15px 0 15px 0;
+  margin: 15px 0;
 
   @media (min-width: 768px) {
     font-size: 20px;
-    margin: 20px 0 20px 0;
+    margin: 20px 0;
   }
-}
-
-.temperature-value {
-  @include blue-green-hue;
-  font-weight: 600;
-}
-
-.humidity-value {
-  @include orange-red-hue;
-  font-weight: 600;
-}
-
-.pressure-value {
-  @include purple-pink-hue;
-  font-weight: 600;
-}
-
-.sound-value {
-  @include cyan-blue-hue;
-  font-weight: 600;
 }
 
 .category {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-bottom: 10px;
+  margin: 0 5px 10px;
   gap: 8px;
 
   p {
-    white-space: normal;
     width: 100%;
     text-align: center;
     font-size: 14px;
@@ -70,8 +45,7 @@
 
   @media (min-width: 768px) {
     align-items: start;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 0 20px 10px;
     gap: 10px;
 
     p {

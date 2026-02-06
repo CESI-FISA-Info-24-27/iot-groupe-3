@@ -73,6 +73,34 @@ $main-blue: #3b82f6;
   animation: gradient-slide 6.5s ease-in-out infinite;
 }
 
+@mixin gradient-border {
+  padding: 2px;
+  background: linear-gradient(90deg, $main-light-blue, $main-light-green, $main-light-blue);
+  background-size: 300% 100%;
+  animation: gradient-slide 6s ease-in-out infinite;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  width: 100%;
+}
+
+@mixin dark-card {
+  background-color: rgba(50, 50, 50);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
 @keyframes gradient-slide {
   0% {
     background-position: 0% 50%;

@@ -1,124 +1,61 @@
 @use "../../../theme/variables.scss" as *;
 
-.section-title {
+.chart-container,
+.table-container {
+  @include dark-card;
   width: 100%;
-  text-align: center;
-  font-size: 20px;
-  margin-bottom: 10px;
-  font-size: 20px;
-  font-weight: 600;
-  color: white;
-  position: relative;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-    max-width: 200px;
-    height: 3px;
-    background: linear-gradient(
-      90deg,
-      $main-light-blue,
-      $main-light-green,
-      $main-light-blue
-    );
-    background-size: 300% 100%;
-    animation: gradient-slide 8s ease-in-out infinite;
-    border-radius: 2px;
-  }
 }
 
 .chart-container {
   height: 300px;
-  width: 100%;
-  background-color: rgba(50, 50, 50);
-  border-radius: 10px;
 }
 
 .table-container {
   max-height: 400px;
   overflow-y: auto;
-  background-color: rgba(50, 50, 50);
-  border-radius: 10px;
-  display: flex;
   justify-content: center;
 }
 
-.mt-20 {
-  margin-top: 20px;
-}
-
-.mb-10 {
-  margin-bottom: 10px;
-}
-
 table {
+  @include gradient-border;
   min-width: 90%;
-  border-collapse: collapse;
-}
-
-table {
   margin: 10px;
+  border-collapse: collapse;
+  border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  border-radius: 8px;
-  padding: 2px;
-  background: linear-gradient(
-    90deg,
-    #{$main-light-blue},
-    #{$main-light-green},
-    #{$main-light-blue}
-  );
-  background-size: 300% 100%;
-  animation: gradient-slide 6s ease-in-out infinite;
 }
 
-table,
 th,
 td {
   border: 1px solid #e0e0e0;
-  color: #fff;
+  color: white;
   background-color: rgba(40, 40, 40, 0.95);
-  font-size: 1rem;
   padding: 10px 12px;
   text-align: left;
 }
 
 th {
   background: #393939;
-  color: white;
   font-weight: 700;
   letter-spacing: 0.5px;
-}
-
-td {
-  background-color: rgba(40, 40, 40, 0.95);
 }
 
 tr:nth-child(even) td {
   background-color: rgba(60, 60, 60, 0.95);
 }
-.ripple-parent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
+.ripple-parent {
+  @include flex-center;
   position: relative;
   overflow: hidden;
-
   border: 1px solid #ddd;
-
   user-select: none;
-
   width: 100%;
   height: 50px;
   border-radius: 8px;
 }
+
 .custom-ripple {
   color: #78ebb7;
 }
@@ -128,7 +65,6 @@ tr:nth-child(even) td {
   padding: 40px 20px;
   text-align: center;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 1rem;
 
   p {
     margin: 0;

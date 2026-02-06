@@ -5,7 +5,7 @@
     @if (!streamLoaded()) {
       <app-spinner message="Chargement de la caméra..." />
     } @else {
-      <div class="section-title">Flux vidéo de la caméra</div>
+      <div class="section-title camera-title">Flux vidéo de la caméra</div>
     }
     <img
       [src]="streamUrl"

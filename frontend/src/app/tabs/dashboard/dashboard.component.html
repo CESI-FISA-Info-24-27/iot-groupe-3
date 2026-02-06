@@ -1,26 +1,26 @@
 <app-header />
 <div id="header-anchor"></div>
 <ion-content>
-  <div class="general-container">
-    <div class="dashboard-container">
-      <div class="welcome-message">
-        <h1>Bienvenue sur votre dashboard CESIGuard.</h1>
-      </div>
+  <div class="flex-col-center">
+    <div class="container">
+      <h1 class="page-title-no-underline">
+        Bienvenue sur votre dashboard CESIGuard.
+      </h1>
 
       <!-- Section des valeurs numériques -->
       <div class="section-container">
         <h2 class="section-title">Valeurs numériques</h2>
-        <div class="cards-grid numeric-grid">
+        <div class="card-grid card-grid-2">
           <!-- Temperature Card -->
-          <div class="card temperature-card">
+          <div class="card">
             <div class="card-title">Température</div>
-            <div class="card-value temperature-value">
+            <div class="card-value sensor-value temperature">
               {{ currentTemperature() }} °C
             </div>
           </div>
 
           <!-- Humidity Card -->
-          <div class="card humidity-card">
+          <div class="card">
             <div class="card-title">Humidité</div>
             <div class="card-value humidity-value">
               {{ currentHumidity() }} %
@@ -28,7 +28,7 @@
           </div>
 
           <!-- Pressure Card -->
-          <div class="card pressure-card">
+          <div class="card">
             <div class="card-title">Pression</div>
             <div class="card-value pressure-value">
               {{ currentPressure() }} hPa
@@ -36,9 +36,11 @@
           </div>
 
           <!-- Sound Card -->
-          <div class="card sound-card">
+          <div class="card">
             <div class="card-title">Son</div>
-            <div class="card-value sound-value">{{ currentSound() }} dB</div>
+            <div class="card-value sensor-value sound">
+              {{ currentSound() }} dB
+            </div>
           </div>
         </div>
       </div>
@@ -46,9 +48,9 @@
       <!-- Section des capteurs booléens -->
       <div class="section-container">
         <h2 class="section-title">Capteurs</h2>
-        <div class="cards-grid boolean-grid">
+        <div class="card-grid card-grid-2">
           <!-- Motion Card -->
-          <div class="card motion-card">
+          <div class="card">
             <div class="card-title">Mouvement</div>
             <div
               class="card-value motion-value"
@@ -59,7 +61,7 @@
           </div>
 
           <!-- Light Card -->
-          <div class="card light-card">
+          <div class="card">
             <div class="card-title">Capteur de lumière</div>
             <div
               class="card-value light-value"
