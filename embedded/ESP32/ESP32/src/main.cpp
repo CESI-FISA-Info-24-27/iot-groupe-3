@@ -6,13 +6,27 @@
 
 /* ===================== DEFINES ===================== */
 #define BUILTIN_LED 2
+#define BROCHE_MICRO 36
+
+#define ADC_MAX 4095
+#define VREF 3.3
+#define SAMPLE_COUNT 500
+#define REF_VOLTAGE 0.01  // référence arbitraire pour calculer les dB relatifs
+
 
 #define BMP_SDA 21
 #define BMP_SCL 22
 
+#define TRIG_PIN 5
+#define ECHO_PIN 18
+#define SOUND_SPEED 340
+#define TRIG_PULSE_DURATION_US 10
+
 #define SERVICE_ENV_UUID        "0d57fddd-b6d0-458d-a9e3-ede9919198d4"
 #define CHAR_TEMP_UUID          "f1047d07-53c8-4877-9c5f-29f7161c516d"
 #define CHAR_PRESSION_UIID      "79d4a577-2f8e-4b44-922a-b807b600eb80"
+#define CHAR_SOUND_UUID         "cf5e24c5-9d6e-48bb-b256-bf0fdbfe0e05"
+#define CHAR_DISTANCE_UUID      "67eec361-5161-489a-8492-ec27b8c7731e"
 
 #define SERVICE_AUTOMATION_UUID "e4115b34-f55b-4e7b-9313-028bfcc5285f"
 #define CHAR_LED_UUID           "3e92916e-15bd-4a65-abbd-b60b07b4e064"
@@ -22,8 +36,12 @@
 /* ===================== GLOBALS ===================== */
 float temperature = 20.0;
 float pressure = 00.0;
+unsigned int sample;
 bool deviceConnected = false;
 bool scaning = true;
+
+long ultrason_duration;
+float distance;
 
 Adafruit_BMP280 bmp; // I2C
 
@@ -32,6 +50,8 @@ NimBLEService* pEnvService = nullptr;
 NimBLEService* pAutomationService = nullptr;
 NimBLECharacteristic* pTempCharacteristic = nullptr;
 NimBLECharacteristic* pPressionCharacteristic = nullptr;
+NimBLECharacteristic* pSoundCharacteristic = nullptr;
+NimBLECharacteristic* pDistanceCharacteristic = nullptr;
 NimBLECharacteristic* pLEDCharacteristic = nullptr;
 
 /* ===================== CALLBACKS ===================== */
@@ -73,6 +93,24 @@ class LEDCallbacks : public NimBLECharacteristicCallbacks
   }
 };
 
+float readMicRMS()
+{
+  long sum = 0;
+  long sumSquares = 0;
+
+  for (int i = 0; i < SAMPLE_COUNT; i++) {
+    int sample = analogRead(BROCHE_MICRO);
+    sum += sample;
+    sumSquares += (long)sample * sample;
+    delayMicroseconds(100); // ≈10kHz
+  }
+
+  float mean = sum / (float)SAMPLE_COUNT;
+  float rms = sqrt((sumSquares / (float)SAMPLE_COUNT) - (mean * mean));
+
+  return rms;
+}
+
 
 
 /* ===================== SETUP ===================== */
@@ -80,7 +118,10 @@ class LEDCallbacks : public NimBLECharacteristicCallbacks
 void setup() 
 {
   pinMode(BUILTIN_LED, OUTPUT);
+  pinMode(TRIG_PIN, OUTPUT); // On configure le trig en output
+  pinMode(ECHO_PIN, INPUT); // On configure l'echo en input
   digitalWrite(BUILTIN_LED, LOW);
+
 
   Wire.begin();
 
@@ -117,6 +158,20 @@ void setup()
 
   pPressionCharacteristic = pEnvService->createCharacteristic(
     CHAR_PRESSION_UIID,
+    NIMBLE_PROPERTY::READ |
+    NIMBLE_PROPERTY::NOTIFY |
+    NIMBLE_PROPERTY::INDICATE
+  );
+
+  pSoundCharacteristic = pEnvService->createCharacteristic(
+    CHAR_SOUND_UUID,
+    NIMBLE_PROPERTY::READ |
+    NIMBLE_PROPERTY::NOTIFY |
+    NIMBLE_PROPERTY::INDICATE
+  );
+
+  pDistanceCharacteristic = pEnvService->createCharacteristic(
+    CHAR_DISTANCE_UUID,
     NIMBLE_PROPERTY::READ |
     NIMBLE_PROPERTY::NOTIFY |
     NIMBLE_PROPERTY::INDICATE
@@ -161,6 +216,23 @@ void setup()
 
 void loop() 
 {
+  float adcRMS = readMicRMS();
+  float voltsRMS = (adcRMS / ADC_MAX) * VREF;
+
+  float dB = 20.0 * log10(voltsRMS / REF_VOLTAGE);
+
+  // Prepare le signal
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  // Créer une impulsion de 10 µs
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(TRIG_PULSE_DURATION_US);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Renvoie le temps de propagation de l'onde (en µs)
+  ultrason_duration = pulseIn(ECHO_PIN, HIGH);
+  // Calcul de la distance
+  distance = ultrason_duration * SOUND_SPEED/2 * 0.0001;
 
   if(scaning)
   {
@@ -200,6 +272,10 @@ void loop()
 
   temperature = bmp.readTemperature();
   pressure = bmp.readPressure() / 100.0F; // Convert to hPa
+  sample = analogRead(BROCHE_MICRO);
+
+  Serial.printf("Temp: %.2f °C, Pression: %.2f hPa, Sound Level: %.2f dB, Distance: %.2f cm\n", temperature, pressure, dB, distance);
+
 
   if (deviceConnected && pTempCharacteristic->getSubscribedCount() > 0) 
   {
@@ -207,7 +283,11 @@ void loop()
     pTempCharacteristic->notify();
     pPressionCharacteristic->setValue(pressure);
     pPressionCharacteristic->notify();
-    Serial.printf("BLE Notify : %.2f °C, %.2f hPa\n", temperature, pressure);
+    pSoundCharacteristic->setValue(dB);
+    pSoundCharacteristic->notify();
+    pDistanceCharacteristic->setValue(distance);
+    pDistanceCharacteristic->notify();
+    Serial.printf("BLE Notify : %.2f °C, %.2f hPa, sound level = %.2f, distance = %.2f cm\n", temperature, pressure, dB, distance);
   }
 
   delay(2000);
