@@ -1,0 +1,191 @@
+# Guide d’utilisation
+
+## Carte ESP32 multi‑capteurs – Alarmes & Confort météo
+
+## 1. Présentation du produit
+
+Cette carte ESP32 multi‑capteurs est une solution connectée destinée à la surveillance environnementale , à la détection d’événements et au confort météo . Elle intègre plusieurs capteurs permettant de mesurer des paramètres physiques et de déclencher des alertes ou alarmes en fonction de seuils configurables.
+
+Le produit est conçu pour un usage domestique, professionnel ou pédagogique :
+
+* Surveillance d’un espace intérieur ou extérieur
+* Détection de présence et d’intrusion
+* Analyse du confort thermique et sonore
+* Visualisation à distance via Wi‑Fi en direct
+
+## 2. Contenu de la carte
+
+La carte ESP32 est composée des capteurs suivants :
+
+* Capteur de pression atmosphérique 
+* Capteur de distance 
+* Sonomètre (niveau sonore) 
+* Capteur de température 
+* Caméra 
+* Capteur PIR (détection de mouvement) 
+
+
+## 3. Description des capteurs et fonctions
+
+### 3.1 Capteur de pression atmosphérique
+
+ Fonction : 
+
+* Mesure la pression de l’air (hPa)
+
+ Utilisation : 
+
+* Suivi des variations météorologiques
+* Détection de changements de temps (baisse ou hausse rapide de pression)
+
+ Alertes possibles : 
+
+* Alerte météo en cas de chute rapide de pression
+
+### 3.2 Capteur de distance
+
+ Fonction : 
+
+* Mesure la distance entre le capteur et un objet
+
+ Utilisation : 
+
+* Détection d’obstacles
+* Surveillance d’un passage ou d’une zone
+
+ Alarmes possibles : 
+
+* Alarme si un objet est détecté à une distance inférieure à un seuil défini
+
+### 3.3 Sonomètre
+
+ Fonction : 
+
+* Mesure le niveau sonore ambiant (dB)
+
+ Utilisation : 
+
+* Surveillance du bruit dans une pièce
+* Analyse du confort acoustique
+
+ Alertes possibles : 
+
+* Alerte de bruit excessif
+* Indicateur de confort sonore (calme / bruyant)
+* Alerte lors d'intusion 
+
+### 3.4 Capteur de température
+
+ Fonction : 
+
+* Mesure la température ambiante (°C)
+
+ Utilisation : 
+
+* Surveillance thermique
+* Analyse du confort intérieur
+
+ Alertes possibles : 
+
+* Alerte température trop élevée
+* Alerte température trop basse
+* Indicateur de confort thermique
+
+
+### 3.5 Caméra
+
+ Fonction : 
+
+* Capture d’images ou de flux vidéo
+
+ Utilisation : 
+
+* Surveillance visuelle
+* Vérification à distance lors d’une alarme
+
+ Fonctions associées : 
+
+* Prise de photo automatique lors d’une détection de mouvement
+* Consultation en temps réel via Wi‑Fi
+
+
+### 3.6 Capteur PIR (détection de mouvement)
+
+ Fonction : 
+
+* Détecte la présence humaine par variation infrarouge
+
+ Utilisation : 
+
+* Détection d’intrusion
+* Surveillance de zone
+
+ Alarmes possibles : 
+
+* Alarme de mouvement
+* Déclenchement de la caméra
+
+
+## 4. Fonctions d’alarme
+
+La carte ESP32 permet de configurer plusieurs alarmes de sécurité :
+
+* Alarme intrusion (PIR + distance)
+* Alarme sonore (niveau sonore anormal)
+* Alarme environnementale (température extrême)
+
+Les alarmes peuvent entraîner :
+
+* Notification via application ou serveur
+* Activation de la caméra
+* Envoi de données via Wi‑Fi
+
+## 5. Fonctions d’alerte de confort météo
+
+Le produit propose des indicateurs de confort basés sur les mesures :
+
+### 5.1 Confort thermique
+
+* Température idéale
+* Température trop froide
+* Température trop chaude
+
+### 5.2 Confort acoustique
+
+* Environnement calme
+* Bruit modéré
+* Bruit excessif
+
+### 5.3 Tendance météo
+
+* Pression stable
+* Amélioration météo
+* Dégradation météo
+
+## 6. Mise en service
+
+1. Alimenter la carte ESP32
+2. Se connecter au réseau Wi‑Fi configuré
+3. Accéder à l’interface de configuration
+4. Définir les seuils d’alarme
+5. Activer ou désactiver les capteurs souhaités
+
+## 7. Utilisation quotidienne
+
+* Consultation des mesures en temps réel
+* Réception d’alertes automatiques
+* Visualisation via la caméra
+* Ajustement des seuils selon les besoins
+* Alerte si un fenêtre 
+
+## 8. Recommandations
+
+* Installer la carte dans un endroit dégagé
+* Éviter les sources de chaleur directe
+* Nettoyer régulièrement les capteurs
+* Mettre à jour le firmware si disponible
+
+## 9. Conclusion
+
+La carte ESP32 multi‑capteurs est une solution complète de sécurité , de surveillance et de confort météo , combinant simplicité d’utilisation et puissance des capteurs intégrés.
+
