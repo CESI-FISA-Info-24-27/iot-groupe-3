@@ -583,7 +583,7 @@ static esp_err_t stream_handler(httpd_req_t *req)
     enable_led(true);
 #endif
 
-    while (true)
+    while (res == ESP_OK)
     {
 #if CONFIG_ESP_FACE_DETECT_ENABLED
 #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_INFO
@@ -597,6 +597,7 @@ static esp_err_t stream_handler(httpd_req_t *req)
         {
             log_e("Camera capture failed");
             res = ESP_FAIL;
+            break;
         }
         else
         {

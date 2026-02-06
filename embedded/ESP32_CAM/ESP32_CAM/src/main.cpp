@@ -39,6 +39,13 @@
 const char *ssid = "Daroxa";
 const char *password = "CASSETOIXAV";
 
+// Paramètres IP fixe
+IPAddress local_IP(10, 94, 86, 91);   // IP souhaitée
+IPAddress gateway(10, 94, 86, 1);     // Box / routeur
+IPAddress subnet(255, 255, 255, 0);   // Masque de sous-réseau
+IPAddress dns1(8, 8, 8, 8);           // DNS Google
+IPAddress dns2(8, 8, 4, 4);           // DNS Google secondaire
+
 void setup()
 {
   Serial.begin(115200);
@@ -65,7 +72,7 @@ void setup()
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
-  config.frame_size = FRAMESIZE_UXGA;
+  config.frame_size = FRAMESIZE_VGA;  // Réduit d'UXGA pour tester
   config.pixel_format = PIXFORMAT_JPEG; // for streaming
   // config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
@@ -141,16 +148,43 @@ void setup()
   setupLedFlash(LED_GPIO_NUM);
 #endif
 
+  //⚠️ IMPORTANT : config AVANT WiFi.begin (désactivé pour test DHCP)
+  if (!WiFi.config(local_IP, gateway, subnet, dns1, dns2)) {
+    Serial.println("STA Failed to configure");
+    return;
+  }
+
   WiFi.begin(ssid, password);
+  Serial.print("Connexion WiFi");
+
   WiFi.setSleep(false);
 
-  while (WiFi.status() != WL_CONNECTED)
+  int retry = 0;
+  while (WiFi.status() != WL_CONNECTED && retry < 20)
   {
     delay(500);
     Serial.print(".");
+    retry++;
   }
   Serial.println("");
-  Serial.println("WiFi connected");
+  
+  if (WiFi.status() == WL_CONNECTED) 
+  {
+    Serial.println("WiFi connected");
+    Serial.print("IP configurée: ");
+    Serial.println(local_IP);
+    Serial.print("IP assignée: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("Passerelle: ");
+    Serial.println(WiFi.gatewayIP());
+    Serial.print("Masque: ");
+    Serial.println(WiFi.subnetMask());
+  } 
+  else 
+  {
+    Serial.println("WiFi connection FAILED!");
+    return;
+  }
 
   startCameraServer();
 
