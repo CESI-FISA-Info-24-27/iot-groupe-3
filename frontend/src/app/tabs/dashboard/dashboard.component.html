@@ -12,7 +12,7 @@
         <h2 class="section-title">Valeurs numériques</h2>
         <div class="card-grid card-grid-2">
           <!-- Temperature Card -->
-          <div class="card">
+          <div class="card accent-temperature">
             <div class="card-title">Température</div>
             <div class="card-value sensor-value temperature">
               {{ currentTemperature() }} °C
@@ -20,7 +20,7 @@
           </div>
 
           <!-- Humidity Card -->
-          <div class="card">
+          <div class="card accent-humidity">
             <div class="card-title">Humidité</div>
             <div class="card-value humidity-value">
               {{ currentHumidity() }} %
@@ -28,7 +28,7 @@
           </div>
 
           <!-- Pressure Card -->
-          <div class="card">
+          <div class="card accent-pressure">
             <div class="card-title">Pression</div>
             <div class="card-value pressure-value">
               {{ currentPressure() }} hPa
@@ -36,7 +36,7 @@
           </div>
 
           <!-- Sound Card -->
-          <div class="card">
+          <div class="card accent-sound">
             <div class="card-title">Son</div>
             <div class="card-value sensor-value sound">
               {{ currentSound() }} dB
@@ -50,7 +50,7 @@
         <h2 class="section-title">Capteurs</h2>
         <div class="card-grid card-grid-2">
           <!-- Motion Card -->
-          <div class="card">
+          <div class="card sensor-card" [class.active]="motionDetected()">
             <div class="card-title">Mouvement</div>
             <div
               class="card-value motion-value"
@@ -61,7 +61,7 @@
           </div>
 
           <!-- Light Card -->
-          <div class="card">
+          <div class="card sensor-card" [class.active]="lightState().lightOn">
             <div class="card-title">Capteur de lumière</div>
             <div
               class="card-value light-value"

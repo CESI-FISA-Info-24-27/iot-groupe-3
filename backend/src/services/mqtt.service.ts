@@ -112,7 +112,7 @@ export function connectToMQTT() {
           }
           break;
 
-        case "capteurs/mouvement":
+        case "capteurs/presence":
           if (typeof value === "boolean") {
             motionController.updateCurrent(value);
             wasteAlertController.updateMotionState(value);

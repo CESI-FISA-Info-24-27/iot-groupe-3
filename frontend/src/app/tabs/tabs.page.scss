@@ -1,7 +1,15 @@
 @use "../../theme/variables" as *;
 
+ion-tab-bar {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 ion-label {
-  font-size: medium;
+  font-size: 12px;
+
+  @media (min-width: 768px) {
+    font-size: medium;
+  }
 }
 
 ion-label.selected-hue {

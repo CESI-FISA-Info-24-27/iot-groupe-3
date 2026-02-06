@@ -121,6 +121,12 @@
 .card {
   @include dark-card;
   padding: 20px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .card-grid {
