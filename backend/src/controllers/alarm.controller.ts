@@ -49,8 +49,7 @@ export function updateCurrent(newValue: boolean, fromFrontend = false) {
   // If update came from frontend, publish to MQTT
   if (fromFrontend && mqttClient) {
     const mqttPayload = JSON.stringify({ value: alarmActive });
-    mqttClient.publish("alarme/mode", mqttPayload);
-    console.log(`Published alarm state to MQTT: ${alarmActive}`);
+    mqttClient.publish("alarme/mode", mqttPayload, { retain: true });
   }
 }
 
@@ -65,7 +64,6 @@ export function setupAlarmSocket() {
     socket.emit("alarm:current", payload);
 
     socket.on("alarm:toggle", (data: { value: boolean }) => {
-      console.log("Received alarm toggle from client:", data.value);
       updateCurrent(data.value, true);
     });
   });
