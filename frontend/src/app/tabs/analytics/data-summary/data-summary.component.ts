@@ -14,4 +14,8 @@ export class DataSummaryComponent {
   averageHumidity = input<number>(NaN);
   averagePressure = input<number>(NaN);
   averageSound = input<number>(NaN);
+
+  isNaN(value: number): boolean {
+    return isNaN(value);
+  }
 }

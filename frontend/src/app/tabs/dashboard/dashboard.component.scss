@@ -13,33 +13,112 @@
   @include flex-center;
   flex-direction: column;
   gap: 16px;
-  min-height: 150px;
+  min-height: 130px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-size: 100% 300%;
+    animation: gradient-slide-vertical 8s ease-in-out infinite;
+  }
 
   @media (min-width: 768px) {
     min-height: 180px;
   }
 }
 
+// Colored left accents for numeric sensor cards
+.accent-temperature::before {
+  background: linear-gradient(180deg, $main-light-blue, $main-light-green, $main-light-blue);
+  background-size: 100% 300%;
+}
+
+.accent-humidity::before {
+  background: linear-gradient(180deg, $main-orange, $main-red, $main-orange);
+  background-size: 100% 300%;
+}
+
+.accent-pressure::before {
+  background: linear-gradient(180deg, $main-purple, $main-pink, $main-purple);
+  background-size: 100% 300%;
+}
+
+.accent-sound::before {
+  background: linear-gradient(180deg, $main-cyan, $main-blue, $main-cyan);
+  background-size: 100% 300%;
+}
+
+// Boolean sensor cards with left accent (matches alerts pattern)
+.sensor-card {
+  &::before {
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: 0;
+    width: 4px;
+    height: auto;
+    background: linear-gradient(180deg, $main-red, #c56161, $main-red);
+    background-size: 100% 300%;
+    animation: gradient-slide-vertical 5s ease-in-out infinite;
+  }
+
+  &.active::before {
+    background: linear-gradient(180deg, $main-light-blue, $main-light-green, $main-light-blue);
+    background-size: 100% 300%;
+    animation: gradient-slide-vertical 8s ease-in-out infinite;
+  }
+}
+
 .card-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  @media (min-width: 768px) {
+    font-size: 14px;
+    letter-spacing: 1.2px;
+  }
 }
 
 .card-value {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   text-align: center;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
 }
 
 .motion-value,
 .light-value {
   @include red-hue;
-  font-size: 24px;
+  font-size: 22px;
 
   &.detected,
   &.light-on {
     @include blue-green-hue;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+@keyframes gradient-slide-vertical {
+  0% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 50% 100%;
   }
 }

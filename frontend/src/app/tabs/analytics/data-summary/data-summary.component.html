@@ -5,19 +5,19 @@
       <div class="category">
         <p>
           Température :
-          <span class="sensor-value temperature">{{ averageTemperature() }} °C</span>
+          <span class="sensor-value temperature">{{ isNaN(averageTemperature()) ? '--' : averageTemperature() + ' °C' }}</span>
         </p>
         <p>
           Humidité :
-          <span class="sensor-value humidity">{{ averageHumidity() }} %</span>
+          <span class="sensor-value humidity">{{ isNaN(averageHumidity()) ? '--' : averageHumidity() + ' %' }}</span>
         </p>
         <p>
           Pression :
-          <span class="sensor-value pressure">{{ averagePressure() }} hPa</span>
+          <span class="sensor-value pressure">{{ isNaN(averagePressure()) ? '--' : averagePressure() + ' hPa' }}</span>
         </p>
         <p>
           Son :
-          <span class="sensor-value sound">{{ averageSound() }} dB</span>
+          <span class="sensor-value sound">{{ isNaN(averageSound()) ? '--' : averageSound() + ' dB' }}</span>
         </p>
       </div>
     </div>
@@ -26,19 +26,19 @@
       <div class="category">
         <p>
           Température :
-          <span class="sensor-value temperature">{{ currentTemperature() }} °C</span>
+          <span class="sensor-value temperature">{{ isNaN(currentTemperature()) ? '--' : currentTemperature() + ' °C' }}</span>
         </p>
         <p>
           Humidité :
-          <span class="sensor-value humidity">{{ currentHumidity() }} %</span>
+          <span class="sensor-value humidity">{{ isNaN(currentHumidity()) ? '--' : currentHumidity() + ' %' }}</span>
         </p>
         <p>
           Pression :
-          <span class="sensor-value pressure">{{ currentPressure() }} hPa</span>
+          <span class="sensor-value pressure">{{ isNaN(currentPressure()) ? '--' : currentPressure() + ' hPa' }}</span>
         </p>
         <p>
           Son :
-          <span class="sensor-value sound">{{ currentSound() }} dB</span>
+          <span class="sensor-value sound">{{ isNaN(currentSound()) ? '--' : currentSound() + ' dB' }}</span>
         </p>
       </div>
     </div>

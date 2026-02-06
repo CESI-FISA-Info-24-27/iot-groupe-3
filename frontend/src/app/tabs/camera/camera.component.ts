@@ -12,7 +12,7 @@ import { MotionService } from 'src/app/shared/services/motion-service';
   imports: [IonContent, HeaderComponent, SpinnerComponent],
 })
 export class CameraComponent {
-  streamUrl = 'http://77.222.181.11:8080/mjpg/video.mjpg';
+  streamUrl = 'https://camera.cesiguard.loicserre.fr/stream/complete';
   lightService = inject(LightService);
   motionService = inject(MotionService);
   streamLoaded = signal<boolean>(false);
