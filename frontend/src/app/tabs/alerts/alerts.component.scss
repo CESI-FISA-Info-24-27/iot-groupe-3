@@ -1,5 +1,8 @@
 @use "../../../theme/variables.scss" as *;
 
+.no-margin {
+  margin: 0;
+}
 .general-container {
   display: flex;
   flex-direction: column;

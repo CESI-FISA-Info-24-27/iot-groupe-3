@@ -30,12 +30,6 @@ function calculateWasteAlert() {
     };
 
     io.emit("waste-alert:current", payload);
-
-    if (wasteDetected) {
-      console.log(
-        "Waste alert: Light is OFF but motion detected - consider turning on the light",
-      );
-    }
   }
 }
 

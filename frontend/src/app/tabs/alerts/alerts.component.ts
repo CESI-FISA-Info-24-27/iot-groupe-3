@@ -1,17 +1,17 @@
 import { Component, computed, inject } from '@angular/core';
-import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonButton, IonContent } from '@ionic/angular/standalone';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
-import { ThermalComfortService } from 'src/app/shared/services/thermal-comfort-service';
-import { HiddenSensorsService } from 'src/app/shared/services/hidden-sensors-service';
-import { AlarmService } from 'src/app/shared/services/alarm-service';
-import { WasteAlertService } from 'src/app/shared/services/waste-alert-service';
 import { ThermalComfort } from 'src/app/shared/models/sensors.model';
+import { AlarmService } from 'src/app/shared/services/alarm-service';
+import { HiddenSensorsService } from 'src/app/shared/services/hidden-sensors-service';
+import { ThermalComfortService } from 'src/app/shared/services/thermal-comfort-service';
+import { WasteAlertService } from 'src/app/shared/services/waste-alert-service';
 
 @Component({
   selector: 'app-alerts',
   templateUrl: './alerts.component.html',
   styleUrls: ['./alerts.component.scss'],
-  imports: [IonContent, IonButton, IonIcon, HeaderComponent],
+  imports: [IonContent, IonButton, HeaderComponent],
 })
 export class AlertsComponent {
   private thermalComfortService = inject(ThermalComfortService);
@@ -19,21 +19,19 @@ export class AlertsComponent {
   private alarmService = inject(AlarmService);
   private wasteAlertService = inject(WasteAlertService);
 
-  thermalComfort = computed(
-    () => this.thermalComfortService.thermalComfortValues().at(-1),
+  thermalComfort = computed(() =>
+    this.thermalComfortService.thermalComfortValues().at(-1),
   );
 
-  hiddenSensors = computed(
-    () => this.hiddenSensorsService.hiddenSensorsValues().at(-1),
+  hiddenSensors = computed(() =>
+    this.hiddenSensorsService.hiddenSensorsValues().at(-1),
   );
 
   alarm = computed(() => this.alarmService.alarmValues().at(-1));
 
   wasteAlert = computed(() => this.wasteAlertService.wasteAlertValues().at(-1));
 
-  sensorsHidden = computed(
-    () => this.hiddenSensors()?.sensorsHidden,
-  );
+  sensorsHidden = computed(() => this.hiddenSensors()?.sensorsHidden);
 
   alarmActive = computed(() => this.alarm()?.alarmActive);
 

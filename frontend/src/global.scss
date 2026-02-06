@@ -31,4 +31,30 @@
   text-align: center;
   font-size: 20px;
   margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    max-width: 200px;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      $main-light-blue,
+      $main-light-green,
+      $main-light-blue
+    );
+    background-size: 300% 100%;
+    animation: gradient-slide 8s ease-in-out infinite;
+    border-radius: 2px;
+  }
 }
