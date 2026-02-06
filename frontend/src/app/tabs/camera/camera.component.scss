@@ -1,24 +1,17 @@
-@use "../.././../theme/variables.scss" as *;
+@use "../../../theme/variables.scss" as *;
 
 .camera-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  @include flex-col-center;
   height: 100%;
 
   img {
+    @include gradient-border;
     border-radius: 8px;
-    padding: 1px;
-    background: linear-gradient(
-      90deg,
-      #{$main-light-blue},
-      #{$main-light-green},
-      #{$main-light-blue}
-    );
-    background-size: 300% 100%;
-    animation: gradient-slide 6s ease-in-out infinite;
   }
+}
+
+.camera-title {
+  width: 100%;
 }
 
 .light-motion-container {
@@ -29,38 +22,28 @@
   margin-top: 20px;
 }
 
-.motion-container {
-  border-radius: 8px;
-  width: 150px;
-  height: 100%;
-  background: rgba(50, 50, 50);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.motion-container,
+.light-container {
+  @include flex-center;
+  @include dark-card;
   text-align: center;
 }
 
+.motion-container {
+  width: 150px;
+  height: 100%;
+}
+
 .light-container {
-  border-radius: 8px;
-  background: rgba(50, 50, 50);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 8px;
 }
 
-.no-motion {
-  @include red-hue;
-}
-
-.motion {
-  @include blue-green-hue;
-}
-
+.no-motion,
 .light-off {
   @include red-hue;
 }
 
+.motion,
 .light-on {
   @include blue-green-hue;
 }

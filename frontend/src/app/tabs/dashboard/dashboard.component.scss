@@ -1,34 +1,5 @@
 @use "../../../theme/variables.scss" as *;
 
-.general-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100%;
-  width: 100%;
-}
-
-.dashboard-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.welcome-message {
-  text-align: center;
-  margin-bottom: 30px;
-  position: relative;
-  padding-bottom: 5px;
-
-  h1 {
-    font-size: 24px;
-    font-weight: 600;
-    color: white;
-  }
-}
-
 .section-container {
   margin-bottom: 30px;
   width: 100%;
@@ -38,64 +9,15 @@
   }
 }
 
-.section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 20px;
-  text-align: center;
-  position: relative;
-  padding-bottom: 10px;
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-    max-width: 200px;
-    height: 3px;
-    background: linear-gradient(
-      90deg,
-      $main-light-blue,
-      $main-light-green,
-      $main-light-blue
-    );
-    background-size: 300% 100%;
-    animation: gradient-slide 8s ease-in-out infinite;
-    border-radius: 2px;
-  }
-}
-
-.cards-grid {
-  display: grid;
-  gap: 16px;
-  width: 100%;
-}
-
-.numeric-grid {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.boolean-grid {
-  grid-template-columns: repeat(2, 1fr);
-}
-
 .card {
-  background-color: rgba(50, 50, 50);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
+  @include flex-center;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: 16px;
   min-height: 150px;
-  backdrop-filter: blur(10px);
-  box-sizing: border-box;
-  overflow: hidden;
-  width: 100%;
+
+  @media (min-width: 768px) {
+    min-height: 180px;
+  }
 }
 
 .card-title {
@@ -111,54 +33,13 @@
   text-align: center;
 }
 
-.temperature-value {
-  @include blue-green-hue;
-}
-
-.humidity-value {
-  @include orange-red-hue;
-}
-
-.pressure-value {
-  @include purple-pink-hue;
-}
-
-.sound-value {
-  @include cyan-blue-hue;
-}
-
-.motion-value {
-  @include red-hue;
-  font-size: 24px;
-
-  &.detected {
-    @include blue-green-hue;
-  }
-}
-
+.motion-value,
 .light-value {
   @include red-hue;
   font-size: 24px;
 
+  &.detected,
   &.light-on {
     @include blue-green-hue;
-  }
-}
-
-@media (min-width: 768px) {
-  .welcome-message h1 {
-    font-size: 32px;
-  }
-
-  .section-title {
-    font-size: 24px;
-  }
-
-  .cards-grid {
-    gap: 20px;
-  }
-
-  .card {
-    min-height: 180px;
   }
 }
