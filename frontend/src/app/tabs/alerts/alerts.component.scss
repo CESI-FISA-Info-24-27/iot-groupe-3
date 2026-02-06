@@ -13,27 +13,64 @@
 }
 
 .alert-card {
-  @include dark-card;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
   padding: 20px;
   display: flex;
   align-items: flex-start;
   gap: 14px;
   transition: all 0.3s ease;
-  border-left: 4px solid rgba(100, 255, 150, 0.6);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background-size: 100% 300%;
+  }
 
   &.alert {
-    border-left-color: rgba(255, 80, 80, 0.8);
-    background-color: rgba(70, 40, 40);
+    background-color: rgba(239, 68, 68, 0.1);
+
+    &::before {
+      background: linear-gradient(180deg, $main-red, #c56161, $main-red);
+      background-size: 100% 300%;
+      animation: gradient-slide-vertical 5s ease-in-out infinite;
+    }
   }
 
   &.ok {
-    border-left-color: rgba(100, 255, 150, 0.8);
-    background-color: rgba(40, 70, 50);
+    background-color: rgba(36, 199, 211, 0.1);
+
+    &::before {
+      background: linear-gradient(
+        180deg,
+        $main-light-blue,
+        $main-light-green,
+        $main-light-blue
+      );
+      background-size: 100% 300%;
+      animation: gradient-slide-vertical 8s ease-in-out infinite;
+    }
   }
 
   &.pending {
-    border-left-color: rgba(255, 152, 0, 0.8);
-    background-color: rgba(70, 55, 40);
+    background-color: rgba(245, 158, 11, 0.1);
+
+    &::before {
+      background: linear-gradient(
+        180deg,
+        $main-orange,
+        $main-red,
+        $main-orange
+      );
+      background-size: 100% 300%;
+      animation: gradient-slide-vertical 6s ease-in-out infinite;
+    }
   }
 
   @media (min-width: 768px) {
@@ -52,9 +89,19 @@
   transition: all 0.3s ease;
   border: 3px solid currentColor;
 
-  &.ok { @include blue-green-hue; }
-  &.warning { @include orange-red-hue; &.alert { @include red-hue; } }
-  &.pending { @include orange-red-hue; opacity: 0.7; }
+  &.ok {
+    @include blue-green-hue;
+  }
+  &.warning {
+    @include orange-red-hue;
+    &.alert {
+      @include red-hue;
+    }
+  }
+  &.pending {
+    @include orange-red-hue;
+    opacity: 0.7;
+  }
 
   @media (min-width: 768px) {
     font-size: 40px;
@@ -109,3 +156,13 @@
     font-weight: 600;
   }
 }
+
+@keyframes gradient-slide-vertical {
+  0% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 50% 100%;
+  }
+}
+
