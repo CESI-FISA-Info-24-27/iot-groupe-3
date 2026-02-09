@@ -44,6 +44,20 @@ void setup()
   Serial.begin(115200);
   Serial.setDebugOutput(true);
   Serial.println();
+  Serial.println("======================");
+  Serial.println("ESP32-CAM Camera Proxy");
+  Serial.println("======================");
+  Serial.print("Modèle: ");
+  Serial.println("AI_THINKER");
+  
+  // Vérification PSRAM
+  if (psramFound()) {
+    Serial.print("PSRAM trouvée: ");
+    Serial.print(ESP.getPsramSize() / 1024);
+    Serial.println(" KB");
+  } else {
+    Serial.println("ATTENTION: PSRAM non détectée !");
+  }
 
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -65,7 +79,7 @@ void setup()
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
-  config.frame_size = FRAMESIZE_UXGA;
+  config.frame_size = FRAMESIZE_VGA;  // 640x480 - Plus stable que UXGA
   config.pixel_format = PIXFORMAT_JPEG; // for streaming
   // config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
@@ -106,12 +120,20 @@ void setup()
 #endif
 
   // camera init
+  Serial.println("Initialisation de la caméra...");
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK)
   {
-    Serial.printf("Camera init failed with error 0x%x", err);
+    Serial.printf("ERREUR: Initialisation caméra échouée (0x%x)\n", err);
+    Serial.println("Code erreur:");
+    if (err == ESP_ERR_NO_MEM) Serial.println("  - Mémoire insuffisante");
+    else if (err == ESP_ERR_NOT_FOUND) Serial.println("  - Caméra non détectée");
+    else if (err == ESP_ERR_NOT_SUPPORTED) Serial.println("  - Configuration non supportée");
+    else Serial.printf("  - Code: 0x%x\n", err);
+    Serial.println("ARRET DU SYSTÈME");
     return;
   }
+  Serial.println("Caméra initialisée avec succès");
 
   sensor_t *s = esp_camera_sensor_get();
   // initial sensors are flipped vertically and colors are a bit saturated
@@ -141,25 +163,76 @@ void setup()
   setupLedFlash(LED_GPIO_NUM);
 #endif
 
+  Serial.println("Démarrage connexion WiFi...");
+  Serial.print("SSID: ");
+  Serial.println(ssid);
+  
+  // Configuration IP statique
+  IPAddress local_IP(10, 94, 86, 91);      // IP fixe de la caméra
+  IPAddress gateway(10, 94, 86, 1);        // Gateway du réseau
+  IPAddress subnet(255, 255, 255, 0);      // Masque de sous-réseau
+  IPAddress primaryDNS(8, 8, 8, 8);        // DNS Google (optionnel)
+  IPAddress secondaryDNS(8, 8, 4, 4);      // DNS Google secondaire (optionnel)
+  
+  Serial.print("Configuration IP statique: ");
+  Serial.println(local_IP);
+  
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("ERREUR: Configuration IP statique échouée");
+  }
+  
   WiFi.begin(ssid, password);
   WiFi.setSleep(false);
 
-  while (WiFi.status() != WL_CONNECTED)
+  int wifi_retry = 0;
+  while (WiFi.status() != WL_CONNECTED && wifi_retry < 40)  // 20 secondes max
   {
     delay(500);
     Serial.print(".");
+    wifi_retry++;
   }
   Serial.println("");
-  Serial.println("WiFi connected");
+  
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("ERREUR: Impossible de se connecter au WiFi !");
+    Serial.println("Vérifiez SSID et mot de passe dans main.cpp");
+    Serial.println("Redémarrage dans 10 secondes...");
+    delay(10000);
+    ESP.restart();
+  }
+  
+  Serial.println("WiFi connecté !");
+  Serial.print("Adresse IP: ");
+  Serial.println(WiFi.localIP());
 
+  Serial.println("Démarrage des serveurs HTTP...");
   startCameraServer();
 
-  Serial.print("Camera Ready! Use 'http://");
+  Serial.println("");
+  Serial.println("========================================");
+  Serial.println("    ESP32-CAM PRÊT");
+  Serial.println("========================================");
+  Serial.print("Interface web:  http://");
+  Serial.println(WiFi.localIP());
+  Serial.print("Streaming:      http://");
   Serial.print(WiFi.localIP());
-  Serial.println("' to connect");
+  Serial.println(":81/stream");
+  Serial.println("========================================");
 }
 
 void loop()
 {
-  delay(10000);
+  // Heartbeat toutes les 10 secondes
+  static unsigned long last_heartbeat = 0;
+  unsigned long now = millis();
+  
+  if (now - last_heartbeat > 10000) {
+    Serial.printf("[Heartbeat] Uptime: %lu sec | Free heap: %u bytes | WiFi: %s\n", 
+                  now / 1000, 
+                  ESP.getFreeHeap(),
+                  WiFi.status() == WL_CONNECTED ? "OK" : "DISCONNECTED");
+    last_heartbeat = now;
+  }
+  
+  delay(100);
 }
