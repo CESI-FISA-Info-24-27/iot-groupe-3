@@ -13,9 +13,24 @@
 #define SAMPLE_COUNT 500
 #define REF_VOLTAGE 0.01  // référence arbitraire pour calculer les dB relatifs
 
+// Strings en PROGMEM pour économiser la RAM
+const char MSG_INIT[] PROGMEM = "Init ESP32 BLE + Sensor";
+const char MSG_BMP_ERROR[] PROGMEM = "Can't find BMP280 device";
+const char MSG_CONNECTED[] PROGMEM = "Client BLE connecté";
+const char MSG_DISCONNECTED[] PROGMEM = "Client BLE déconnecté";
+const char MSG_LED_ON[] PROGMEM = "LED allumée";
+const char MSG_LED_OFF[] PROGMEM = "LED éteinte";
+const char MSG_ADV_STARTED[] PROGMEM = "Advertising started";
+const char MSG_SCANNING[] PROGMEM = "Scanning...";
+const char MSG_I2C_FOUND[] PROGMEM = "I2C device found at address 0x";
+const char MSG_I2C_ERROR[] PROGMEM = "Unknow error at address 0x";
+const char MSG_NO_DEVICES[] PROGMEM = "No I2C devices found\n";
+const char MSG_DONE[] PROGMEM = "done\n";
 
 #define BMP_SDA 21
 #define BMP_SCL 22
+
+#define PIR_PIN 39
 
 #define TRIG_PIN 5
 #define ECHO_PIN 18
@@ -27,6 +42,7 @@
 #define CHAR_PRESSION_UIID      "79d4a577-2f8e-4b44-922a-b807b600eb80"
 #define CHAR_SOUND_UUID         "cf5e24c5-9d6e-48bb-b256-bf0fdbfe0e05"
 #define CHAR_DISTANCE_UUID      "67eec361-5161-489a-8492-ec27b8c7731e"
+#define CHAR_PIR_UUID           "7a1d01a8-0234-4087-bc1d-077368a51172"
 
 #define SERVICE_AUTOMATION_UUID "e4115b34-f55b-4e7b-9313-028bfcc5285f"
 #define CHAR_LED_UUID           "3e92916e-15bd-4a65-abbd-b60b07b4e064"
@@ -34,17 +50,21 @@
 #define DEVICE_NAME "EcoGuard_GrpX"
 
 /* ===================== GLOBALS ===================== */
-float temperature = 20.0;
-float pressure = 00.0;
-unsigned int sample;
+// Structure pour regrouper les données des capteurs
+struct SensorData {
+  float temperature = 20.0;
+  float pressure = 0.0;
+  float sound = 0.0;
+  float distance = 0.0;
+  bool motionDetected = false;
+} sensorData;
+
 bool deviceConnected = false;
 bool scaning = true;
 
-long ultrason_duration;
-float distance;
-
 Adafruit_BMP280 bmp; // I2C
 
+// Pointeurs BLE (réduisent la RAM par rapport à des objets complets)
 NimBLEServer* pServer = nullptr;
 NimBLEService* pEnvService = nullptr;
 NimBLEService* pAutomationService = nullptr;
@@ -52,6 +72,7 @@ NimBLECharacteristic* pTempCharacteristic = nullptr;
 NimBLECharacteristic* pPressionCharacteristic = nullptr;
 NimBLECharacteristic* pSoundCharacteristic = nullptr;
 NimBLECharacteristic* pDistanceCharacteristic = nullptr;
+NimBLECharacteristic* pPIRCharacteristic = nullptr;
 NimBLECharacteristic* pLEDCharacteristic = nullptr;
 
 /* ===================== CALLBACKS ===================== */
@@ -60,13 +81,13 @@ class ServerCallbacks : public NimBLEServerCallbacks
   void onConnect(NimBLEServer* pServer) override 
   {
     deviceConnected = true;
-    Serial.println("Client BLE connecté");
+    Serial.println(FPSTR(MSG_CONNECTED));
   }
 
   void onDisconnect(NimBLEServer* pServer) override 
   {
       deviceConnected = false;
-      Serial.println("Client BLE déconnecté");
+      Serial.println(FPSTR(MSG_DISCONNECTED));
       NimBLEDevice::getAdvertising()->start();
   }
 };
@@ -84,24 +105,29 @@ class LEDCallbacks : public NimBLECharacteristicCallbacks
     if (cmd == 0x01) 
     {
       digitalWrite(BUILTIN_LED, HIGH);
-      Serial.println("LED allumée");
+      Serial.println(FPSTR(MSG_LED_ON));
     } else if (cmd == 0x00) 
     {
       digitalWrite(BUILTIN_LED, LOW);
-      Serial.println("LED éteinte");
+      Serial.println(FPSTR(MSG_LED_OFF));
     }
   }
 };
 
+// Instances statiques (créées une seule fois en mémoire)
+static ServerCallbacks serverCallbacks;
+static LEDCallbacks ledCallbacks;
+
 float readMicRMS()
 {
-  long sum = 0;
-  long sumSquares = 0;
+  uint32_t sum = 0;       // uint32_t suffisant pour la somme
+  uint32_t sumSquares = 0; // uint32_t pour les carrés
 
-  for (int i = 0; i < SAMPLE_COUNT; i++) {
-    int sample = analogRead(BROCHE_MICRO);
+  // Utiliser auto pour laisser le compilateur optimiser
+  for (auto i = 0; i < SAMPLE_COUNT; i++) {
+    uint16_t sample = analogRead(BROCHE_MICRO); // uint16_t au lieu de int
     sum += sample;
-    sumSquares += (long)sample * sample;
+    sumSquares += (uint32_t)sample * sample;
     delayMicroseconds(100); // ≈10kHz
   }
 
@@ -120,17 +146,18 @@ void setup()
   pinMode(BUILTIN_LED, OUTPUT);
   pinMode(TRIG_PIN, OUTPUT); // On configure le trig en output
   pinMode(ECHO_PIN, INPUT); // On configure l'echo en input
+  pinMode(PIR_PIN, INPUT);
   digitalWrite(BUILTIN_LED, LOW);
 
 
   Wire.begin();
 
   Serial.begin(115200);
-  Serial.println("Init ESP32 BLE + Sensor");
+  Serial.println(FPSTR(MSG_INIT));
 
   if(!bmp.begin(0x77))
   {
-    Serial.println("Can't find BMP280 device");
+    Serial.println(FPSTR(MSG_BMP_ERROR));
     while (1);
   }
 
@@ -140,7 +167,8 @@ void setup()
   NimBLEDevice::setPower(ESP_PWR_LVL_P9);   // Puissance max (optionnel)
 
   pServer = NimBLEDevice::createServer();
-  pServer->setCallbacks(new ServerCallbacks());
+  // Utiliser une instance statique au lieu de 'new'
+  pServer->setCallbacks(&serverCallbacks);
 
   /* Services */
   pEnvService = pServer->createService(SERVICE_ENV_UUID);
@@ -177,26 +205,31 @@ void setup()
     NIMBLE_PROPERTY::INDICATE
   );
 
-  // Descriptor 0x2904 (Characteristic Presentation Format)
-  NimBLE2904* pFormat = new NimBLE2904();
-  pFormat->setFormat(NimBLE2904::FORMAT_FLOAT32);
-  pFormat->setUnit(0x272F); // °C
-  pFormat->setExponent(0);
-  pTempCharacteristic->addDescriptor(pFormat);
+  pPIRCharacteristic = pEnvService->createCharacteristic(
+    CHAR_PIR_UUID,
+    NIMBLE_PROPERTY::READ |
+    NIMBLE_PROPERTY::NOTIFY |
+    NIMBLE_PROPERTY::INDICATE
+  );
 
-  // Descriptor 0x2904 (Characteristic Presentation Format)
-  NimBLE2904* pFormat2 = new NimBLE2904();
-  pFormat2->setFormat(NimBLE2904::FORMAT_FLOAT32);
-  pFormat2->setUnit(0x2781); // hPa
-  pFormat2->setExponent(0);
-  pPressionCharacteristic->addDescriptor(pFormat2);
+  // Les descripteurs sont créés une seule fois et gérés par les caractéristiques
+  pTempCharacteristic->addDescriptor(new NimBLE2904());
+  ((NimBLE2904*)pTempCharacteristic->getDescriptorByUUID("2904"))->setFormat(NimBLE2904::FORMAT_FLOAT32);
+  ((NimBLE2904*)pTempCharacteristic->getDescriptorByUUID("2904"))->setUnit(0x272F); // °C
+  ((NimBLE2904*)pTempCharacteristic->getDescriptorByUUID("2904"))->setExponent(0);
+
+  pPressionCharacteristic->addDescriptor(new NimBLE2904());
+  ((NimBLE2904*)pPressionCharacteristic->getDescriptorByUUID("2904"))->setFormat(NimBLE2904::FORMAT_FLOAT32);
+  ((NimBLE2904*)pPressionCharacteristic->getDescriptorByUUID("2904"))->setUnit(0x2781); // hPa
+  ((NimBLE2904*)pPressionCharacteristic->getDescriptorByUUID("2904"))->setExponent(0);
 
   /* LED */
   pLEDCharacteristic = pAutomationService->createCharacteristic(
     CHAR_LED_UUID,
     NIMBLE_PROPERTY::WRITE
   );
-  pLEDCharacteristic->setCallbacks(new LEDCallbacks());
+  // Utiliser une instance statique au lieu de 'new'
+  pLEDCharacteristic->setCallbacks(&ledCallbacks);
 
   pEnvService->start();
   pAutomationService->start();
@@ -209,17 +242,21 @@ void setup()
   pAdvertising->addServiceUUID(SERVICE_AUTOMATION_UUID);
   pAdvertising->start();
 
-  Serial.println("Advertising started");
+  Serial.println(FPSTR(MSG_ADV_STARTED));
 }
 
 /* ===================== LOOP ===================== */
 
 void loop() 
 {
+  // Variables locales au lieu de globales - économise la RAM
   float adcRMS = readMicRMS();
   float voltsRMS = (adcRMS / ADC_MAX) * VREF;
-
   float dB = 20.0 * log10(voltsRMS / REF_VOLTAGE);
+
+  // Capteur ultrason - variables locales
+  uint32_t ultrason_duration; // uint32_t suffisant pour pulseIn
+  float distance;
 
   // Prepare le signal
   digitalWrite(TRIG_PIN, LOW);
@@ -232,62 +269,68 @@ void loop()
   // Renvoie le temps de propagation de l'onde (en µs)
   ultrason_duration = pulseIn(ECHO_PIN, HIGH);
   // Calcul de la distance
-  distance = ultrason_duration * SOUND_SPEED/2 * 0.0001;
+  distance = ultrason_duration * SOUND_SPEED / 2 * 0.0001;
 
   if(scaning)
   {
     byte error, address;
-    int nDevices;
-    Serial.println("Scanning...");
-    nDevices = 0;
-    for(address = 1; address < 127; address++ ) {
+    int nDevices = 0;
+    Serial.println(FPSTR(MSG_SCANNING));
+    
+    for(address = 1; address < 127; address++) {
       Wire.beginTransmission(address);
       error = Wire.endTransmission();
       if (error == 0) {
-        Serial.print("I2C device found at address 0x");
-        if (address<16) {
+        Serial.print(FPSTR(MSG_I2C_FOUND));
+        if (address < 16) {
           Serial.print("0");
         }
-        Serial.println(address,HEX);
+        Serial.println(address, HEX);
         nDevices++;
       }
-      else if (error==4) {
-        Serial.print("Unknow error at address 0x");
-        if (address<16) {
+      else if (error == 4) {
+        Serial.print(FPSTR(MSG_I2C_ERROR));
+        if (address < 16) {
           Serial.print("0");
         }
-        Serial.println(address,HEX);
+        Serial.println(address, HEX);
       }    
     }
+    
     if (nDevices == 0) {
-      Serial.println("No I2C devices found\n");
-      scaning = false;
+      Serial.println(FPSTR(MSG_NO_DEVICES));
     }
     else {
-      Serial.println("done\n");
-      scaning = false;
+      Serial.println(FPSTR(MSG_DONE));
     }
+    scaning = false;
   }
 
-
-  temperature = bmp.readTemperature();
-  pressure = bmp.readPressure() / 100.0F; // Convert to hPa
-  sample = analogRead(BROCHE_MICRO);
-
-  Serial.printf("Temp: %.2f °C, Pression: %.2f hPa, Sound Level: %.2f dB, Distance: %.2f cm\n", temperature, pressure, dB, distance);
-
-
+  // Remplir la structure avec les données des capteurs
+  sensorData.temperature = bmp.readTemperature();
+  sensorData.pressure = bmp.readPressure() / 100.0F; // Convert to hPa
+  sensorData.sound = dB;  // Niveau sonore en dB
+  sensorData.distance = distance;  // Distance en cm
+  sensorData.motionDetected = digitalRead(PIR_PIN);  // Détection de mouvement
+  
   if (deviceConnected && pTempCharacteristic->getSubscribedCount() > 0) 
   {
-    pTempCharacteristic->setValue(temperature);
+    pTempCharacteristic->setValue(sensorData.temperature);
     pTempCharacteristic->notify();
-    pPressionCharacteristic->setValue(pressure);
+    pPressionCharacteristic->setValue(sensorData.pressure);
     pPressionCharacteristic->notify();
-    pSoundCharacteristic->setValue(dB);
+    pSoundCharacteristic->setValue(sensorData.sound);
     pSoundCharacteristic->notify();
-    pDistanceCharacteristic->setValue(distance);
+    pDistanceCharacteristic->setValue(sensorData.distance);
     pDistanceCharacteristic->notify();
-    Serial.printf("BLE Notify : %.2f °C, %.2f hPa, sound level = %.2f, distance = %.2f cm\n", temperature, pressure, dB, distance);
+    pPIRCharacteristic->setValue(sensorData.motionDetected);
+    pPIRCharacteristic->notify();
+    
+    // Printf avec format supporté pour ESP32
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "BLE Notify : %.2f C, %.2f hPa, sound level = %.2f, distance = %.2f cm, motion = %d\n", 
+             sensorData.temperature, sensorData.pressure, sensorData.sound, sensorData.distance, sensorData.motionDetected);
+    Serial.print(buffer);
   }
 
   delay(2000);
