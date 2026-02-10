@@ -17,13 +17,7 @@ export class CameraComponent {
   motionService = inject(MotionService);
   streamLoaded = signal<boolean>(false);
 
-  lightState = computed(
-    () =>
-      this.lightService.lightValues().at(-1) ?? {
-        lightOn: false,
-        timestamp: new Date(),
-      },
-  );
+  lightState = computed(() => this.lightService.lightValues().at(-1));
 
   motionState = computed(() => this.motionService.motionValues().at(-1));
 
@@ -32,7 +26,7 @@ export class CameraComponent {
   );
 
   lightClass = computed(() =>
-    this.lightState().lightOn ? 'light-on' : 'light-off',
+    this.lightState()?.lightOn ? 'light-on' : 'light-off',
   );
 
   constructor() {}

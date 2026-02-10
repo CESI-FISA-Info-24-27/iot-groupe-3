@@ -67,6 +67,17 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
   }
+
+  &.pending::before {
+    background: linear-gradient(180deg, $main-orange, $main-red, $main-orange) !important;
+    background-size: 100% 300% !important;
+    animation: gradient-slide-vertical 6s ease-in-out infinite !important;
+  }
+
+  &.pending > div {
+    @include orange-red-hue;
+    opacity: 0.7;
+  }
 }
 
 .motion-container::before {

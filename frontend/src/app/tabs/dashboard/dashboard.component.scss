@@ -31,6 +31,12 @@
   @media (min-width: 768px) {
     min-height: 180px;
   }
+
+  &.pending::before {
+    background: linear-gradient(180deg, $main-orange, $main-red, $main-orange) !important;
+    background-size: 100% 300% !important;
+    animation: gradient-slide-vertical 6s ease-in-out infinite !important;
+  }
 }
 
 // Colored left accents for numeric sensor cards
@@ -73,6 +79,12 @@
     background-size: 100% 300%;
     animation: gradient-slide-vertical 8s ease-in-out infinite;
   }
+
+  &.pending::before {
+    background: linear-gradient(180deg, $main-orange, $main-red, $main-orange) !important;
+    background-size: 100% 300% !important;
+    animation: gradient-slide-vertical 6s ease-in-out infinite !important;
+  }
 }
 
 .card-title {
@@ -97,6 +109,24 @@
   @media (min-width: 768px) {
     font-size: 32px;
   }
+}
+
+.card.pending .card-value {
+  @include orange-red-hue;
+  opacity: 0.7;
+  font-size: 22px;
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+.humidity-value {
+  @include orange-red-hue;
+}
+
+.pressure-value {
+  @include purple-pink-hue;
 }
 
 .motion-value,

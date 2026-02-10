@@ -75,3 +75,10 @@
     }
   }
 }
+
+.sensor-value {
+  &.pending {
+    @include orange-red-hue;
+    opacity: 0.7;
+  }
+}
