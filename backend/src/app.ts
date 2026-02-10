@@ -8,7 +8,6 @@ import motionRouter from "./routes/motion";
 import pressureRouter from "./routes/pressure";
 import soundRouter from "./routes/sound";
 import thermalComfortRouter from "./routes/thermal-comfort";
-import hiddenSensorsRouter from "./routes/hidden-sensors";
 import alarmRouter from "./routes/alarm";
 import wasteAlertRouter from "./routes/waste-alert";
 import { setupSwagger } from "./swagger";
@@ -32,7 +31,7 @@ app.use("/motion", motionRouter);
 app.use("/pressure", pressureRouter);
 app.use("/sound", soundRouter);
 app.use("/thermal-comfort", thermalComfortRouter);
-app.use("/hidden-sensors", hiddenSensorsRouter);
+
 app.use("/alarm", alarmRouter);
 app.use("/waste-alert", wasteAlertRouter);
 

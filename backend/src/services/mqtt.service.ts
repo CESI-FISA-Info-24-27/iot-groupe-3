@@ -6,7 +6,6 @@ import * as humidityController from "../controllers/humidity.controller";
 import * as lightController from "../controllers/light.controller";
 import * as motionController from "../controllers/motion.controller";
 import * as thermalComfortController from "../controllers/thermal-comfort.controller";
-import * as hiddenSensorsController from "../controllers/hidden-sensors.controller";
 import * as alarmController from "../controllers/alarm.controller";
 import * as wasteAlertController from "../controllers/waste-alert.controller";
 
@@ -117,13 +116,6 @@ export function connectToMQTT() {
             motionController.updateCurrent(value);
             wasteAlertController.updateMotionState(value);
             console.log(`Updated motion: ${value ? "DETECTED" : "NONE"}`);
-          }
-          break;
-
-        case "capteurs/capteurs_caches":
-          if (typeof value === "boolean") {
-            hiddenSensorsController.updateCurrent(value);
-            console.log(`Updated hidden sensors: ${value ? "HIDDEN" : "VISIBLE"}`);
           }
           break;
 

@@ -133,7 +133,10 @@ export class AnalyticsComponent {
       (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
-    return all.slice(0, 30);
+    const deduplicated = all.filter(
+      (event, index) => index === 0 || all[index - 1].type !== event.type,
+    );
+    return deduplicated.slice(0, 30);
   });
   temperatureChartInstance: Chart | null = null;
   humidityChartInstance: Chart | null = null;
