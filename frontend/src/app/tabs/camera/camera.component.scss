@@ -1,66 +1,110 @@
-@use "../.././../theme/variables.scss" as *;
+@use "../../../theme/variables.scss" as *;
 
 .camera-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  @include flex-col-center;
   height: 100%;
 
   img {
+    @include gradient-border;
     border-radius: 8px;
-    padding: 1px;
-    background: linear-gradient(
-      90deg,
-      #{$main-light-blue},
-      #{$main-light-green},
-      #{$main-light-blue}
-    );
-    background-size: 300% 100%;
-    animation: gradient-slide 6s ease-in-out infinite;
+    max-width: 100%;
   }
+}
+
+.camera-title {
+  width: 100%;
 }
 
 .light-motion-container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-top: 20px;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 20px;
+    margin-top: 20px;
+    max-width: 600px;
+  }
 }
 
-.motion-container {
-  border-radius: 8px;
-  width: 150px;
-  height: 100%;
-  background: rgba(50, 50, 50);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
+.motion-container,
 .light-container {
-  border-radius: 8px;
-  background: rgba(50, 50, 50);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
+  @include flex-center;
+  @include dark-card;
+  text-align: center;
+  flex: 1;
+  padding: 16px 18px;
+  min-height: 52px;
+  font-weight: 600;
+  font-size: 17px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-size: 100% 300%;
+    animation: gradient-slide-vertical 5s ease-in-out infinite;
+  }
+
+  @media (min-width: 768px) {
+    padding: 18px 24px;
+    font-size: 18px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &.pending::before {
+    background: linear-gradient(180deg, $main-orange, $main-red, $main-orange) !important;
+    background-size: 100% 300% !important;
+    animation: gradient-slide-vertical 6s ease-in-out infinite !important;
+  }
+
+  &.pending > div {
+    @include orange-red-hue;
+    opacity: 0.7;
+  }
 }
 
-.no-motion {
-  @include red-hue;
+.motion-container::before {
+  background: linear-gradient(180deg, $main-light-blue, $main-light-green, $main-light-blue);
+  background-size: 100% 300%;
 }
 
-.motion {
-  @include blue-green-hue;
+.light-container::before {
+  background: linear-gradient(180deg, $main-light-blue, $main-light-green, $main-light-blue);
+  background-size: 100% 300%;
 }
 
+.no-motion,
 .light-off {
   @include red-hue;
 }
 
+.motion,
 .light-on {
   @include blue-green-hue;
+}
+
+@keyframes gradient-slide-vertical {
+  0% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 50% 100%;
+  }
 }

@@ -48,13 +48,7 @@ export class DashboardComponent {
 
   motionState = computed(() => this.motionService.motionValues().at(-1));
 
-  lightState = computed(
-    () =>
-      this.lightService.lightValues().at(-1) ?? {
-        lightOn: false,
-        timestamp: new Date(),
-      },
-  );
+  lightState = computed(() => this.lightService.lightValues().at(-1));
 
   motionDetected = computed(() => this.motionState()?.motionDetected ?? false);
 }

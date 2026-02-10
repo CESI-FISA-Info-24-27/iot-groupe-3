@@ -1,40 +1,46 @@
 <app-header />
 <div id="header-anchor"></div>
 <ion-content>
-  <div class="general-container">
-    <div class="dashboard-container">
-      <div class="welcome-message">
-        <h1>Bienvenue sur votre dashboard CESIGuard.</h1>
-      </div>
+  <div class="flex-col-center">
+    <div class="container">
+      <h1 class="page-title-no-underline">
+        Bienvenue sur votre dashboard CESIGuard.
+      </h1>
 
       <!-- Section des valeurs numériques -->
       <div class="section-container">
         <h2 class="section-title">Valeurs numériques</h2>
-        <div class="cards-grid numeric-grid">
+        <div class="card-grid card-grid-2">
           <!-- Temperature Card -->
-          <div class="card temperature-card">
+          <div class="card accent-temperature" [class.pending]="currentTemperature() === '--'">
             <div class="card-title">Température</div>
-            <div class="card-value temperature-value">
-              {{ currentTemperature() }} °C
+            <div class="card-value sensor-value temperature">
+              {{ currentTemperature() === '--' ? 'Chargement...' : currentTemperature() + ' °C' }}
             </div>
           </div>
 
           <!-- Humidity Card -->
-          <div class="card humidity-card">
+          <div class="card accent-humidity" [class.pending]="currentHumidity() === '--'">
             <div class="card-title">Humidité</div>
-            <div class="card-value humidity-value">{{ currentHumidity() }} %</div>
+            <div class="card-value humidity-value">
+              {{ currentHumidity() === '--' ? 'Chargement...' : currentHumidity() + ' %' }}
+            </div>
           </div>
 
           <!-- Pressure Card -->
-          <div class="card pressure-card">
+          <div class="card accent-pressure" [class.pending]="currentPressure() === '--'">
             <div class="card-title">Pression</div>
-            <div class="card-value pressure-value">{{ currentPressure() }} hPa</div>
+            <div class="card-value pressure-value">
+              {{ currentPressure() === '--' ? 'Chargement...' : currentPressure() + ' hPa' }}
+            </div>
           </div>
 
           <!-- Sound Card -->
-          <div class="card sound-card">
+          <div class="card accent-sound" [class.pending]="currentSound() === '--'">
             <div class="card-title">Son</div>
-            <div class="card-value sound-value">{{ currentSound() }} dB</div>
+            <div class="card-value sensor-value sound">
+              {{ currentSound() === '--' ? 'Chargement...' : currentSound() + ' dB' }}
+            </div>
           </div>
         </div>
       </div>
@@ -42,26 +48,26 @@
       <!-- Section des capteurs booléens -->
       <div class="section-container">
         <h2 class="section-title">Capteurs</h2>
-        <div class="cards-grid boolean-grid">
+        <div class="card-grid card-grid-2">
           <!-- Motion Card -->
-          <div class="card motion-card">
+          <div class="card sensor-card" [class.active]="motionDetected()" [class.pending]="!motionState()">
             <div class="card-title">Mouvement</div>
             <div
               class="card-value motion-value"
               [class.detected]="motionDetected()"
             >
-              {{ motionDetected() ? "Détecté" : "Aucun" }}
+              {{ !motionState() ? "Chargement..." : motionDetected() ? "Détecté" : "Aucun" }}
             </div>
           </div>
 
           <!-- Light Card -->
-          <div class="card light-card">
+          <div class="card sensor-card" [class.active]="lightState()?.lightOn" [class.pending]="!lightState()">
             <div class="card-title">Capteur de lumière</div>
             <div
               class="card-value light-value"
-              [class.light-on]="lightState().lightOn"
+              [class.light-on]="lightState()?.lightOn"
             >
-              {{ lightState().lightOn ? "Allumé" : "Éteint" }}
+              {{ !lightState() ? "Chargement..." : lightState()?.lightOn ? "Allumé" : "Éteint" }}
             </div>
           </div>
         </div>

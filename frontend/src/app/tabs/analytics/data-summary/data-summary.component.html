@@ -5,11 +5,19 @@
       <div class="category">
         <p>
           Température :
-          <span class="temperature-value">{{ averageTemperature() }} °C</span>
+          <span class="sensor-value temperature" [class.pending]="isNaN(averageTemperature())">{{ isNaN(averageTemperature()) ? '...' : averageTemperature() + ' °C' }}</span>
         </p>
         <p>
           Humidité :
-          <span class="humidity-value">{{ averageHumidity() }} %</span>
+          <span class="sensor-value humidity" [class.pending]="isNaN(averageHumidity())">{{ isNaN(averageHumidity()) ? '...' : averageHumidity() + ' %' }}</span>
+        </p>
+        <p>
+          Pression :
+          <span class="sensor-value pressure" [class.pending]="isNaN(averagePressure())">{{ isNaN(averagePressure()) ? '...' : averagePressure() + ' hPa' }}</span>
+        </p>
+        <p>
+          Son :
+          <span class="sensor-value sound" [class.pending]="isNaN(averageSound())">{{ isNaN(averageSound()) ? '...' : averageSound() + ' dB' }}</span>
         </p>
         <p>
           Pression :
@@ -26,11 +34,19 @@
       <div class="category">
         <p>
           Température :
-          <span class="temperature-value">{{ currentTemperature() }} °C</span>
+          <span class="sensor-value temperature" [class.pending]="isNaN(currentTemperature())">{{ isNaN(currentTemperature()) ? '...' : currentTemperature() + ' °C' }}</span>
         </p>
         <p>
           Humidité :
-          <span class="humidity-value">{{ currentHumidity() }} %</span>
+          <span class="sensor-value humidity" [class.pending]="isNaN(currentHumidity())">{{ isNaN(currentHumidity()) ? '...' : currentHumidity() + ' %' }}</span>
+        </p>
+        <p>
+          Pression :
+          <span class="sensor-value pressure" [class.pending]="isNaN(currentPressure())">{{ isNaN(currentPressure()) ? '...' : currentPressure() + ' hPa' }}</span>
+        </p>
+        <p>
+          Son :
+          <span class="sensor-value sound" [class.pending]="isNaN(currentSound())">{{ isNaN(currentSound()) ? '...' : currentSound() + ' dB' }}</span>
         </p>
         <p>
           Pression :

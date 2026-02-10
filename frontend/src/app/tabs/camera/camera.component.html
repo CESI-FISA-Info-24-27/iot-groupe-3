@@ -5,7 +5,7 @@
     @if (!streamLoaded()) {
       <app-spinner message="Chargement de la caméra..." />
     } @else {
-      <div class="section-title">Flux vidéo de la caméra</div>
+      <div class="section-title camera-title">Flux vidéo de la caméra</div>
     }
     <img
       [src]="streamUrl"
@@ -16,18 +16,26 @@
     />
     @if (streamLoaded()) {
       <div class="light-motion-container">
-        <div class="motion-container">
+        <div class="motion-container" [class.pending]="!motionState()">
           <div [class]="motionClass()">
             {{
-              motionState()?.motionDetected
-                ? "Mouvement détecté"
-                : "Aucun mouvement"
+              !motionState()
+                ? "Mouvement en chargement..."
+                : motionState()?.motionDetected
+                  ? "Mouvement détecté"
+                  : "Aucun mouvement"
             }}
           </div>
         </div>
-        <div class="light-container">
+        <div class="light-container" [class.pending]="!lightState()">
           <div [class]="lightClass()">
-            {{ lightState().lightOn ? "Lumière allumée" : "Lumière éteinte" }}
+            {{
+              !lightState()
+                ? "Lumière en chargement..."
+                : lightState()?.lightOn
+                  ? "Lumière allumée"
+                  : "Lumière éteinte"
+            }}
           </div>
         </div>
       </div>

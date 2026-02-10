@@ -26,6 +26,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'alerts',
+        loadComponent: () =>
+          import('./alerts/alerts.component').then((m) => m.AlertsComponent),
+      },
+      {
         path: '',
         redirectTo: '/dashboard',
         pathMatch: 'full',
