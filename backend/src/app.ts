@@ -10,6 +10,7 @@ import soundRouter from "./routes/sound";
 import thermalComfortRouter from "./routes/thermal-comfort";
 import alarmRouter from "./routes/alarm";
 import wasteAlertRouter from "./routes/waste-alert";
+import exportRouter from "./routes/export";
 import { setupSwagger } from "./swagger";
 const app = express();
 
@@ -34,6 +35,8 @@ app.use("/thermal-comfort", thermalComfortRouter);
 
 app.use("/alarm", alarmRouter);
 app.use("/waste-alert", wasteAlertRouter);
+
+app.use("/export", exportRouter);
 
 app.use("/", statusRouter);
 
