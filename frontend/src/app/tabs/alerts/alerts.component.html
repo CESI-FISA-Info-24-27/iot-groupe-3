@@ -42,27 +42,6 @@
           </div>
         </div>
 
-        <!-- Sensors State Alert -->
-        <div
-          class="alert-card"
-          [class.alert]="sensorsHidden() === true"
-          [class.ok]="sensorsHidden() === false"
-          [class.pending]="sensorsHidden() === undefined"
-        >
-          <div
-            class="custom-icon"
-            [class.ok]="getAlertState(sensorsHidden()) === 'ok'"
-            [class.warning]="getAlertState(sensorsHidden()) === 'warning'"
-            [class.pending]="getAlertState(sensorsHidden()) === 'pending'"
-          >
-            {{ getAlertIcon(sensorsHidden()) }}
-          </div>
-          <div class="alert-content">
-            <h3>État des capteurs</h3>
-            <p class="alert-value">{{ getSensorsLabel(sensorsHidden()) }}</p>
-          </div>
-        </div>
-
         <!-- Alarm Mode Alert -->
         <div
           class="alert-card"

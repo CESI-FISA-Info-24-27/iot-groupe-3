@@ -6,7 +6,6 @@ import { Server as SocketIOServer } from "socket.io";
 import app from "./app";
 import { connectToMQTT } from "./services/mqtt.service";
 import { setupAlarmSocket } from "./controllers/alarm.controller";
-import { setupHiddenSensorsSocket } from "./controllers/hidden-sensors.controller";
 import { setupWasteAlertSocket } from "./controllers/waste-alert.controller";
 import { setupThermalComfortSocket } from "./controllers/thermal-comfort.controller";
 
@@ -30,7 +29,6 @@ io.on("connection", (socket) => {
 
 // Setup socket communication for all controllers
 setupAlarmSocket();
-setupHiddenSensorsSocket();
 setupWasteAlertSocket();
 setupThermalComfortSocket();
 
