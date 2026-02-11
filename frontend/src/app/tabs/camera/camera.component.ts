@@ -5,8 +5,7 @@ import { SpinnerComponent } from 'src/app/shared/components/spinner/spinner.comp
 import { LightService } from 'src/app/shared/services/light-service';
 import { MotionService } from 'src/app/shared/services/motion-service';
 import { CameraService } from 'src/app/shared/services/camera-service';
-import { CameraService } from 'src/app/shared/services/camera-service';
-import { CommonModule } from '@angular/common';
+import { ToggleLightComponent } from './toggle-light/toggle-light.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -26,7 +25,6 @@ export class CameraComponent {
   lightService = inject(LightService);
   motionService = inject(MotionService);
   cameraService = inject(CameraService);
-  cameraService = inject(CameraService);
   streamLoaded = signal<boolean>(false);
 
   lightState = computed(() => this.lightService.lightValues().at(-1));
@@ -43,8 +41,6 @@ export class CameraComponent {
 
   detectionInfo = computed(() => this.cameraService.detectionInfo());
 
-  detectionInfo = computed(() => this.cameraService.detectionInfo());
-
   constructor() {}
 
   onStreamLoad(): void {
@@ -53,5 +49,9 @@ export class CameraComponent {
 
   onStreamError(): void {
     this.streamLoaded.set(false);
+  }
+
+  onLightStateChange(): void {
+    this.lightService.toggleLight();
   }
 }

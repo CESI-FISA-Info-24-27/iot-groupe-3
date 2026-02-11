@@ -171,7 +171,7 @@ router.get("/occupancy/stats", async (req, res) => {
 
     for (const [key, query] of Object.entries(queries)) {
       const data = await queryApi.collectRows(query);
-      stats[key] = data.length > 0 ? data[0]._value : 0;
+      stats[key] = data.length > 0 ? (data[0] as any)._value : 0;
     }
 
     res.json({

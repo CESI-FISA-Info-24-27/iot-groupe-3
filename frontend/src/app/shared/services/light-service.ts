@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { io } from 'socket.io-client';
 import { BASE_BACKEND_URL } from '../models/request-parameters.model';
@@ -10,7 +11,7 @@ import { ValuePayload } from '../models/value-payload';
 export class LightService {
   lightValues = signal<LightInfo[]>([]);
 
-  constructor() {
+  constructor(private http: HttpClient) {
     let socket = io(BASE_BACKEND_URL);
 
     socket.on('light:current', (newCurrentLight: ValuePayload) => {
@@ -22,6 +23,10 @@ export class LightService {
         },
       ]);
     });
+  }
+
+  toggleLight(): void {
+    this.http.post<ValuePayload>(`${BASE_BACKEND_URL}/light/toggle`, {}).subscribe();
   }
 
   getCurrentLightState(): boolean {
