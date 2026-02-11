@@ -11,6 +11,14 @@
           Son :
           <span class="sensor-value sound" [class.pending]="isNaN(averageSound())">{{ isNaN(averageSound()) ? '...' : averageSound() + ' dB' }}</span>
         </p>
+        <p>
+          Pression :
+          <span class="sensor-value pressure" [class.pending]="isNaN(averagePressure())">{{ isNaN(averagePressure()) ? '...' : averagePressure() + ' hPa' }}</span>
+        </p>
+        <p>
+          Humidité :
+          <span class="sensor-value humidity" [class.pending]="isNaN(averageHumidity())">{{ isNaN(averageHumidity()) ? '...' : averageHumidity() + ' %' }}</span>
+        </p>
       </div>
     </div>
     <div>
