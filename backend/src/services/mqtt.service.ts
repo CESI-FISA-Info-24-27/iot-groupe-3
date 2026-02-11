@@ -1,12 +1,12 @@
 import mqtt from "mqtt";
-import * as pressureController from "../controllers/pressure.controller";
-import * as soundController from "../controllers/sound.controller";
-import * as temperatureController from "../controllers/temperature.controller";
+import * as alarmController from "../controllers/alarm.controller";
 import * as humidityController from "../controllers/humidity.controller";
 import * as lightController from "../controllers/light.controller";
 import * as motionController from "../controllers/motion.controller";
+import * as pressureController from "../controllers/pressure.controller";
+import * as soundController from "../controllers/sound.controller";
+import * as temperatureController from "../controllers/temperature.controller";
 import * as thermalComfortController from "../controllers/thermal-comfort.controller";
-import * as alarmController from "../controllers/alarm.controller";
 import * as wasteAlertController from "../controllers/waste-alert.controller";
 
 const MQTT_BROKER_URL =
@@ -129,7 +129,7 @@ export function connectToMQTT() {
         default:
           console.log(`No handler for topic: ${topic}`);
       }
-    } catch (e) {
+    } catch {
       console.log("Could not parse message as JSON or extract value");
     }
   });
