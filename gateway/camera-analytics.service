@@ -1,0 +1,18 @@
+[Unit]
+Description=Camera Analytics AI Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/camera-analytics
+ExecStart=/usr/bin/python3 /root/camera-analytics/camera_analytics.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+Environment="RASPBERRY_PROXY_URL=http://localhost:9888/stream"
+Environment="BACKEND_URL=http://localhost:3000"
+
+[Install]
+WantedBy=multi-user.target
