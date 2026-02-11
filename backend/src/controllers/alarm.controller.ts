@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
+import mqtt from "mqtt/*";
 import { ValuePayload } from "../models/value-payload";
 import { io } from "../server";
 
 let alarmActive = false;
-let mqttClient: any = null;
+let mqttClient: mqtt.MqttClient | null = null;
 
-export function setMQTTClient(client: any) {
+export function setMQTTClient(client: mqtt.MqttClient) {
   mqttClient = client;
 }
 
