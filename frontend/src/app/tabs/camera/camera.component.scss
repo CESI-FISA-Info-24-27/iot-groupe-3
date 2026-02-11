@@ -46,3 +46,132 @@
 .motion {
   @include blue-green-hue;
 }
+
+// Styles pour les informations de détection
+.detection-info-container {
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.detection-card {
+  background-color: rgba(50, 50, 50);
+  border-radius: 12px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.detection-title {
+  font-size: 1em;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: center;
+  position: relative;
+  padding-bottom: 12px;
+  color: white;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      $main-light-blue,
+      $main-light-green,
+      $main-light-blue
+    );
+    background-size: 300% 100%;
+    animation: gradient-slide 8s ease-in-out infinite;
+    border-radius: 2px;
+  }
+}
+
+.detection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.detection-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(30, 30, 30, 0.6);
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: rgba(30, 30, 30, 0.8);
+  }
+}
+
+.detection-label {
+  font-size: 0.75em;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.detection-value {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #fff;
+  
+  &.highlight {
+    @include blue-green-hue;
+    font-size: 1.3em;
+  }
+  
+  &.occupied {
+    @include blue-green-hue;
+  }
+  
+  &.light-on {
+    background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+    background-size: 300% 100%;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-slide 6s ease-in-out infinite;
+  }
+}
+
+// Style pour le titre de section
+.section-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+@media (min-width: 768px) {
+  .detection-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .detection-card {
+    padding: 20px;
+  }
+
+  .detection-title {
+    font-size: 1.15em;
+  }
+
+  .detection-value {
+    font-size: 1.3em;
+
+    &.highlight {
+      font-size: 1.5em;
+    }
+  }
+}

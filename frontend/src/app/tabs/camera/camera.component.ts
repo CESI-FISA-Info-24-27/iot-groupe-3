@@ -4,7 +4,9 @@ import { HeaderComponent } from 'src/app/shared/components/header/header.compone
 import { SpinnerComponent } from 'src/app/shared/components/spinner/spinner.component';
 import { LightService } from 'src/app/shared/services/light-service';
 import { MotionService } from 'src/app/shared/services/motion-service';
+import { CameraService } from 'src/app/shared/services/camera-service';
 import { ToggleLightComponent } from './toggle-light/toggle-light.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-camera',
@@ -15,12 +17,14 @@ import { ToggleLightComponent } from './toggle-light/toggle-light.component';
     HeaderComponent,
     SpinnerComponent,
     ToggleLightComponent,
+    CommonModule,
   ],
 })
 export class CameraComponent {
-  streamUrl = 'https://camera.cesiguard.loicserre.fr/api/stream.mjpeg?src=esp32cam';
+  streamUrl = 'https://camera.cesiguard.loicserre.fr/stream/complete';
   lightService = inject(LightService);
   motionService = inject(MotionService);
+  cameraService = inject(CameraService);
   streamLoaded = signal<boolean>(false);
 
   lightState = computed(
@@ -36,6 +40,8 @@ export class CameraComponent {
   motionClass = computed(() =>
     this.motionState()?.motionDetected ? 'motion' : 'no-motion',
   );
+
+  detectionInfo = computed(() => this.cameraService.detectionInfo());
 
   constructor() {}
 
