@@ -5,6 +5,8 @@ import { SpinnerComponent } from 'src/app/shared/components/spinner/spinner.comp
 import { LightService } from 'src/app/shared/services/light-service';
 import { MotionService } from 'src/app/shared/services/motion-service';
 import { CameraService } from 'src/app/shared/services/camera-service';
+import { CameraService } from 'src/app/shared/services/camera-service';
+import { CommonModule } from '@angular/common';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -21,9 +23,9 @@ import { CommonModule } from '@angular/common';
 })
 export class CameraComponent {
   streamUrl = 'https://camera.cesiguard.loicserre.fr/stream/complete';
-  streamUrl = 'https://camera.cesiguard.loicserre.fr/stream/complete';
   lightService = inject(LightService);
   motionService = inject(MotionService);
+  cameraService = inject(CameraService);
   cameraService = inject(CameraService);
   streamLoaded = signal<boolean>(false);
 
@@ -38,6 +40,8 @@ export class CameraComponent {
   lightClass = computed(() =>
     this.lightState()?.lightOn ? 'light-on' : 'light-off',
   );
+
+  detectionInfo = computed(() => this.cameraService.detectionInfo());
 
   detectionInfo = computed(() => this.cameraService.detectionInfo());
 
