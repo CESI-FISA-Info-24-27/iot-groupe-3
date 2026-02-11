@@ -295,74 +295,39 @@ def video_feed_fast():
 
 @app.route('/stream/complete')
 def video_feed_complete():
-    """Stream complet : détections + floutage - Optimisé pour <200ms latence"""
+    """Stream complet : floutage de visages uniquement (pas d'overlay)"""
     def generate():
-        frame_times = deque(maxlen=10)  # Réduit pour calcul plus réactif
         last_yield_time = 0
         
         while True:
             if latest_frame_cv is not None:
-                # Timestamp de capture de cette frame
-                frame_timestamp = last_update
                 processing_start = time.time()
                 
                 # Copier la frame
                 frame = latest_frame_cv.copy()
                 
-                # Calculer FPS
-                current_time = time.time()
-                if last_yield_time > 0:
-                    frame_times.append(current_time - last_yield_time)
-                last_yield_time = current_time
-                fps = len(frame_times) / sum(frame_times) if len(frame_times) > 0 else 0
-                
-                # Détecter et flouter les visages (cache depuis analyze_frame)
+                # Détecter et flouter les visages UNIQUEMENT
                 faces = current_metrics.get("faces", [])
                 if len(faces) > 0:
                     frame = blur_faces(frame, np.array(faces))
                 
-                # Dessiner boxes autour des visages pour montrer détection
-                for (x, y, w, h) in faces:
-                    cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 255), 2)  # Jaune pour visages
-                    cv2.putText(frame, f"Person", (x, y-10),
-                               cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
-                
-                # === PANNEAU D'INFORMATIONS ===
-                overlay = frame.copy()
-                cv2.rectangle(overlay, (0, 0), (frame.shape[1], 110), (0, 0, 0), -1)
-                cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, frame)
-                
-                # État de la lumière
-                light_status = "Light: ON" if current_metrics.get("light_on", False) else "Light: OFF"
-                light_color = (0, 255, 0) if current_metrics.get("light_on", False) else (0, 0, 255)
-                brightness = current_metrics.get("brightness", 0)
-                cv2.putText(frame, f"{light_status} ({brightness:.0f})", (10, 30),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, light_color, 2)
-                
-                # Nombre de personnes (basé sur visages)
-                person_count = current_metrics.get("person_count", 0)
-                person_color = (0, 255, 0) if person_count > 0 else (150, 150, 150)
-                cv2.putText(frame, f"Persons: {person_count}", (10, 60),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, person_color, 2)
-                
-                # Calculer latence précise (temps depuis capture)
-                latency_ms = int((processing_start - frame_timestamp) * 1000)
-                latency_color = (0, 255, 0) if latency_ms < 200 else (0, 165, 255) if latency_ms < 500 else (0, 0, 255)
-                cv2.putText(frame, f"Latency: {latency_ms}ms | FPS: {fps:.1f}", (10, 90),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.6, latency_color, 2)
+                # PAS de boxes, PAS d'overlay, PAS de texte
+                # Stream propre avec floutage uniquement
                 
                 # Encoder en JPEG avec qualité optimisée
-                _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 75])  # Réduit de 80 à 75
+                _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
                 frame_bytes = buffer.tobytes()
                 
                 yield (b'--frame\r\n'
                        b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+                
+                last_yield_time = time.time()
             else:
                 # Fallback sur flux brut
                 if latest_frame:
                     yield (b'--frame\r\n'
                            b'Content-Type: image/jpeg\r\n\r\n' + latest_frame + b'\r\n')
-            time.sleep(0.02)  # 50 FPS max pour réduire latence
+            time.sleep(0.02)  # 50 FPS max
     
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
@@ -440,6 +405,65 @@ def metrics():
         "metrics": current_metrics,
         "status": "ok" if time.time() - last_update < 10 else "stale"
     })
+
+@app.route('/stream/debug')
+def video_feed_debug():
+    """Stream avec overlay d'informations pour debug uniquement"""
+    def generate():
+        frame_times = deque(maxlen=10)
+        last_yield_time = 0
+        
+        while True:
+            if latest_frame_cv is not None:
+                frame_timestamp = last_update
+                processing_start = time.time()
+                frame = latest_frame_cv.copy()
+                
+                # FPS
+                current_time = time.time()
+                if last_yield_time > 0:
+                    frame_times.append(current_time - last_yield_time)
+                last_yield_time = current_time
+                fps = len(frame_times) / sum(frame_times) if len(frame_times) > 0 else 0
+                
+                # Flouter visages
+                faces = current_metrics.get("faces", [])
+                if len(faces) > 0:
+                    frame = blur_faces(frame, np.array(faces))
+                    # Boxes jaunes pour debug
+                    for (x, y, w, h) in faces:
+                        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 255), 2)
+                
+                # Overlay d'informations
+                overlay = frame.copy()
+                cv2.rectangle(overlay, (0, 0), (frame.shape[1], 110), (0, 0, 0), -1)
+                cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, frame)
+                
+                light_status = "Light: ON" if current_metrics.get("light_on", False) else "Light: OFF"
+                light_color = (0, 255, 0) if current_metrics.get("light_on", False) else (0, 0, 255)
+                brightness = current_metrics.get("brightness", 0)
+                cv2.putText(frame, f"{light_status} ({brightness:.0f})", (10, 30),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, light_color, 2)
+                
+                person_count = current_metrics.get("person_count", 0)
+                cv2.putText(frame, f"Persons: {person_count}", (10, 60),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0) if person_count > 0 else (150, 150, 150), 2)
+                
+                latency_ms = int((processing_start - frame_timestamp) * 1000)
+                latency_color = (0, 255, 0) if latency_ms < 200 else (0, 165, 255) if latency_ms < 500 else (0, 0, 255)
+                cv2.putText(frame, f"Latency: {latency_ms}ms | FPS: {fps:.1f}", (10, 90),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.6, latency_color, 2)
+                
+                _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+            else:
+                if latest_frame:
+                    yield (b'--frame\r\n'
+                           b'Content-Type: image/jpeg\r\n\r\n' + latest_frame + b'\r\n')
+            time.sleep(0.02)
+    
+    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/occupancy')
 def occupancy():

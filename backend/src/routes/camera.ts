@@ -193,4 +193,49 @@ router.get("/occupancy/stats", async (req, res) => {
   }
 });
 
+/**
+ * GET /camera/detection
+ * Récupère les dernières informations de détection de la caméra
+ * (pour affichage séparé du stream)
+ */
+router.get("/detection", async (req, res) => {
+  try {
+    const query = `
+      from(bucket: "${influxBucket}")
+        |> range(start: -1m)
+        |> filter(fn: (r) => r["_measurement"] == "room_occupancy")
+        |> last()
+    `;
+
+    const result: any = {
+      person_count: 0,
+      face_count: 0,
+      light_on: false,
+      brightness: 0,
+      is_occupied: false,
+      confidence: 0,
+      occupancy_rate: 0,
+      timestamp: null,
+    };
+
+    const data = await queryApi.collectRows(query);
+
+    data.forEach((row: any) => {
+      result[row._field] = row._value;
+      result.timestamp = row._time;
+    });
+
+    res.json({
+      status: "ok",
+      detection: result,
+    });
+  } catch (error) {
+    console.error("Error querying detection data:", error);
+    res.status(500).json({
+      error: "Failed to query detection data",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 export default router;

@@ -5,7 +5,7 @@ import statusRouter from "./routes/status";
 import temperatureRouter from "./routes/temperature";
 import lightRouter from "./routes/light";
 import motionRouter from "./routes/motion";
-import cameraRouter from "./routes/camera.routes";
+import cameraRouter from "./routes/camera";
 import { setupSwagger } from "./swagger";
 const app = express();
 
