@@ -15,6 +15,51 @@
       (error)="onStreamError()"
     />
     @if (streamLoaded()) {
+      <!-- Informations de détection de la caméra -->
+      @if (detectionInfo()) {
+        <div class="detection-info-container">
+          <div class="detection-card">
+            <div class="detection-title">Détection en temps réel</div>
+            <div class="detection-grid">
+              <div class="detection-item">
+                <span class="detection-label">Personnes</span>
+                <span class="detection-value" [class.highlight]="detectionInfo()!.person_count > 0">
+                  {{ detectionInfo()!.person_count }}
+                </span>
+              </div>
+              <div class="detection-item">
+                <span class="detection-label">Visages</span>
+                <span class="detection-value" [class.highlight]="detectionInfo()!.face_count > 0">
+                  {{ detectionInfo()!.face_count }}
+                </span>
+              </div>
+              <div class="detection-item">
+                <span class="detection-label">Statut</span>
+                <span class="detection-value" [class.occupied]="detectionInfo()!.is_occupied">
+                  {{ detectionInfo()!.is_occupied ? 'Occupée' : 'Libre' }}
+                </span>
+              </div>
+              <div class="detection-item">
+                <span class="detection-label">Occupation</span>
+                <span class="detection-value" [class.highlight]="detectionInfo()!.occupancy_rate > 50">
+                  {{ detectionInfo()!.occupancy_rate.toFixed(1) }}%
+                </span>
+              </div>
+              <div class="detection-item">
+                <span class="detection-label">Luminosité</span>
+                <span class="detection-value">{{ detectionInfo()!.brightness.toFixed(0) }}</span>
+              </div>
+              <div class="detection-item">
+                <span class="detection-label">Lumière</span>
+                <span class="detection-value" [class.light-on]="detectionInfo()!.light_on">
+                  {{ detectionInfo()!.light_on ? 'Allumée' : 'Éteinte' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      
       <div class="light-motion-container">
         <div class="motion-container" [class.pending]="!motionState()">
           <div [class]="motionClass()">
