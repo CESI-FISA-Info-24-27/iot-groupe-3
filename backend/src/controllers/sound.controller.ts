@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ValuePayload } from "../models/value-payload";
 import { io } from "../server";
+import { addToHistory } from "./history.controller";
 
 let averageSound = NaN;
 let currentSound = NaN;
@@ -77,5 +78,8 @@ export function updateCurrent(newValue: number) {
     value: currentSound,
     timestamp: new Date(),
   };
+  
+  addToHistory("sound", payload);
+  
   io.emit("sound:current", payload);
 }

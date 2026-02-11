@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ValuePayload } from "../models/value-payload";
 import { io } from "../server";
+import { addToHistory } from "./history.controller";
 
 let averageHumidity = NaN;
 let currentHumidity = NaN;
@@ -77,6 +78,9 @@ export function updateCurrent(newValue: number) {
     value: currentHumidity,
     timestamp: new Date(),
   };
+  
+  addToHistory("humidity", payload);
+  
   io.emit("humidity:current", payload);
 }
 
