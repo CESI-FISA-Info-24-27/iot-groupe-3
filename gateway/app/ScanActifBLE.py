@@ -10,8 +10,7 @@ MQTT_BROKER = "loicserre.freeboxos.fr"
 MQTT_PORT = 1883
 
 # Topics de commandes (frontend -> gateway)
-CMD_ALARM_TOPIC = "commands/alarme"
-CMD_ALARM_STOP_TOPIC = "commands/alarme_stop"
+CMD_ALARM_TOPIC = "alarme/mode"
 
 CHAR_MAP = {
     "f1047d07-53c8-4877-9c5f-29f7161c516d": ("Température", "°C", "capteurs/temperature", "float32"),
@@ -45,7 +44,7 @@ asyncio_loop: Optional[asyncio.AbstractEventLoop] = None
 def format_value(value):
     """Formate l'affichage selon le type de valeur"""
     formatters = {
-        bool: lambda v: 'Détecté' if v else 'Absent',
+        bool: lambda v: 'Oui' if v else 'Non',
         float: lambda v: f"{v:.2f}",
         int: lambda v: str(v),
     }
@@ -145,7 +144,6 @@ def on_mqtt_message(client, userdata, msg):
 
     mapping = {
         CMD_ALARM_TOPIC: 'alarme',
-        CMD_ALARM_STOP_TOPIC: 'alarme_stop',
     }
 
     command_type = mapping.get(topic)
@@ -273,7 +271,6 @@ async def main():
 
     # S'abonner aux topics de commande
     mqtt_client.subscribe(CMD_ALARM_TOPIC)
-    mqtt_client.subscribe(CMD_ALARM_STOP_TOPIC)
 
     mqtt_client.loop_start()
 
