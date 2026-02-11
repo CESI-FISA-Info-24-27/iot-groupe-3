@@ -23,16 +23,7 @@ interface DetectionResponse {
   providedIn: 'root',
 })
 export class CameraService {
-  detectionInfo = signal<CameraDetectionInfo | null>({
-    person_count: 2,
-    face_count: 2,
-    light_on: true,
-    brightness: 75.5,
-    is_occupied: true,
-    confidence: 0.85,
-    occupancy_rate: 45.2,
-    timestamp: new Date(),
-  });
+  detectionInfo = signal<CameraDetectionInfo | null>(null);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
 

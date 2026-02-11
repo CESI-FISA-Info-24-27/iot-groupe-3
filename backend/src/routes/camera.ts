@@ -231,17 +231,17 @@ router.get("/detection", async (req, res) => {
     });
   } catch (error) {
     console.error("Error querying detection data:", error);
-    // Retourner des données de test au lieu d'une erreur pour permettre le développement local
+    // Retourner des données par défaut (zéro) quand InfluxDB n'a pas encore de données
     res.json({
       status: "ok",
       detection: {
-        person_count: 2,
-        face_count: 2,
-        light_on: true,
-        brightness: 85.5,
-        is_occupied: true,
-        confidence: 0.92,
-        occupancy_rate: 45.8,
+        person_count: 0,
+        face_count: 0,
+        light_on: false,
+        brightness: 0,
+        is_occupied: false,
+        confidence: 0,
+        occupancy_rate: 0,
         timestamp: new Date().toISOString(),
       },
     });
