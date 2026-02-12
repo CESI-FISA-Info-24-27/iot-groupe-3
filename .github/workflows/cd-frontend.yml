@@ -1,4 +1,5 @@
 
+
 name: CD Frontend - Déploiement automatique
 
 # Déclenchement après succès du CI OU manuellement
@@ -84,12 +85,12 @@ jobs:
   # ========================================
   # Job : Déploiement sur le serveur
   # ========================================
+
   deploy:
     name: Deploy Frontend to Server
     runs-on: ubuntu-latest
     needs: [check-frontend-tests]
     if: ${{ github.event_name == 'workflow_dispatch' || needs.check-frontend-tests.outputs.can-deploy == 'true' }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

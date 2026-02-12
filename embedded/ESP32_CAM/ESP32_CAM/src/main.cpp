@@ -167,6 +167,20 @@ void setup()
   Serial.print("SSID: ");
   Serial.println(ssid);
   
+  // Configuration IP statique
+  IPAddress local_IP(10, 94, 86, 91);      // IP fixe de la caméra
+  IPAddress gateway(10, 94, 86, 1);        // Gateway du réseau
+  IPAddress subnet(255, 255, 255, 0);      // Masque de sous-réseau
+  IPAddress primaryDNS(8, 8, 8, 8);        // DNS Google (optionnel)
+  IPAddress secondaryDNS(8, 8, 4, 4);      // DNS Google secondaire (optionnel)
+  
+  Serial.print("Configuration IP statique: ");
+  Serial.println(local_IP);
+  
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("ERREUR: Configuration IP statique échouée");
+  }
+  
   WiFi.begin(ssid, password);
   WiFi.setSleep(false);
 
