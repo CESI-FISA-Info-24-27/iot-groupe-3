@@ -6,19 +6,29 @@
         <div class="title">CESIGuard</div>
       </div>
 
-      <div
-        class="status"
-        (click)="toggleText()"
-        [class]="statusToClass(status())"
-      >
-        <span
-          class="status-dot"
+      <div class="toolbar-actions">
+        <button
+          class="theme-toggle"
+          (click)="themeService.toggle()"
+          [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        >
+          <ion-icon [name]="themeService.isDark() ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+        </button>
+
+        <div
+          class="status"
+          (click)="toggleText()"
           [class]="statusToClass(status())"
-          [class.clicked]="showText()"
-        ></span>
-        @if (showText()) {
-          <p>{{ status() }}</p>
-        }
+        >
+          <span
+            class="status-dot"
+            [class]="statusToClass(status())"
+            [class.clicked]="showText()"
+          ></span>
+          @if (showText()) {
+            <p>{{ status() }}</p>
+          }
+        </div>
       </div>
     </div>
   </ion-toolbar>

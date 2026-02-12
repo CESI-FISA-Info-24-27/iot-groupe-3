@@ -1,12 +1,12 @@
 import mqtt from "mqtt";
-import * as pressureController from "../controllers/pressure.controller";
-import * as soundController from "../controllers/sound.controller";
-import * as temperatureController from "../controllers/temperature.controller";
+import * as alarmController from "../controllers/alarm.controller";
 import * as humidityController from "../controllers/humidity.controller";
 import * as lightController from "../controllers/light.controller";
 import * as motionController from "../controllers/motion.controller";
+import * as pressureController from "../controllers/pressure.controller";
+import * as soundController from "../controllers/sound.controller";
+import * as temperatureController from "../controllers/temperature.controller";
 import * as thermalComfortController from "../controllers/thermal-comfort.controller";
-import * as alarmController from "../controllers/alarm.controller";
 import * as wasteAlertController from "../controllers/waste-alert.controller";
 
 const MQTT_BROKER_URL =
@@ -44,10 +44,6 @@ export function connectToMQTT() {
   let latestHumidity = NaN;
 
   client.on("message", (topic, message) => {
-    console.log("\nMQTT Message Received:");
-    console.log("  Topic:", topic);
-    console.log("  Message:", message.toString());
-
     try {
       const data = JSON.parse(message.toString());
       const value = data.value;
@@ -58,7 +54,6 @@ export function connectToMQTT() {
             temperatureController.updateCurrent(value);
             temperatureController.updateAverage(value);
             latestTemperature = value;
-            console.log(`Updated temperature: ${value}°C`);
 
             // Update thermal comfort if we have both temperature and humidity
             if (!isNaN(latestHumidity)) {
@@ -75,7 +70,6 @@ export function connectToMQTT() {
             humidityController.updateCurrent(value);
             humidityController.updateAverage(value);
             latestHumidity = value;
-            console.log(`Updated humidity: ${value}%`);
 
             // Update thermal comfort if we have both temperature and humidity
             if (!isNaN(latestTemperature)) {
@@ -91,7 +85,6 @@ export function connectToMQTT() {
           if (typeof value === "number") {
             pressureController.updateCurrent(value);
             pressureController.updateAverage(value);
-            console.log(`Updated pressure: ${value} hPa`);
           }
           break;
 
@@ -99,7 +92,6 @@ export function connectToMQTT() {
           if (typeof value === "number") {
             soundController.updateCurrent(value);
             soundController.updateAverage(value);
-            console.log(`Updated sound: ${value} dB`);
           }
           break;
 
@@ -107,7 +99,6 @@ export function connectToMQTT() {
           if (typeof value === "boolean") {
             lightController.updateCurrent(value);
             wasteAlertController.updateLightState(value);
-            console.log(`Updated light: ${value ? "ON" : "OFF"}`);
           }
           break;
 
@@ -115,7 +106,6 @@ export function connectToMQTT() {
           if (typeof value === "boolean") {
             motionController.updateCurrent(value);
             wasteAlertController.updateMotionState(value);
-            console.log(`Updated motion: ${value ? "DETECTED" : "NONE"}`);
           }
           break;
 
@@ -127,9 +117,9 @@ export function connectToMQTT() {
           break;
 
         default:
-          console.log(`No handler for topic: ${topic}`);
+          break;
       }
-    } catch (e) {
+    } catch {
       console.log("Could not parse message as JSON or extract value");
     }
   });
