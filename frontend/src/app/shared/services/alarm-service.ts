@@ -9,6 +9,7 @@ import { ValuePayload } from '../models/value-payload';
 })
 export class AlarmService {
   alarmValues = signal<AlarmInfo[]>([]);
+  alarmRinging = signal<boolean>(false);
   private socket: Socket;
 
   constructor() {
@@ -22,6 +23,9 @@ export class AlarmService {
           timestamp: new Date(data.timestamp),
         },
       ]);
+    });
+    this.socket.on('alarm:ringing', (data: ValuePayload) => {
+      this.alarmRinging.set(data.value as boolean);
     });
   }
 

@@ -3,6 +3,7 @@ import { ValuePayload } from "../models/value-payload";
 import { io } from "../server";
 
 let alarmActive = false;
+let alarmRinging = false; // ✅ Nouvel état
 let mqttClient: any = null;
 
 export function setMQTTClient(client: any) {
@@ -31,8 +32,19 @@ export function setCurrent(req: Request, res: Response) {
   const payload: ValuePayload = {
     value: alarmActive,
     timestamp: new Date(),
-  };
+  };  
   res.json(payload);
+}
+
+export function updateRinging(isRinging: boolean) {
+  alarmRinging = isRinging;
+
+  const payload: ValuePayload = {
+    value: alarmRinging,
+    timestamp: new Date(),
+  };
+
+  io.emit("alarm:ringing", payload);
 }
 
 // StreamIO updates for alarm:current
@@ -45,6 +57,11 @@ export function updateCurrent(newValue: boolean, fromFrontend = false) {
   };
 
   io.emit("alarm:current", payload);
+
+  // ✅ Si on désactive l'alarme, elle ne peut plus sonner
+  if (!newValue && alarmRinging) {
+    updateRinging(false);
+  }
 
   // If update came from frontend, publish to MQTT
   if (fromFrontend && mqttClient) {
@@ -62,6 +79,13 @@ export function setupAlarmSocket() {
       timestamp: new Date(),
     };
     socket.emit("alarm:current", payload);
+
+    // ✅ Émettre aussi l'état "ringing" aux nouveaux clients
+    const ringingPayload: ValuePayload = {
+      value: alarmRinging,
+      timestamp: new Date(),
+    };
+    socket.emit("alarm:ringing", ringingPayload);
 
     socket.on("alarm:toggle", (data: { value: boolean }) => {
       updateCurrent(data.value, true);

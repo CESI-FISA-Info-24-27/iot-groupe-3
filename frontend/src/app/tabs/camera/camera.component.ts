@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular/standalone';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
 import { SpinnerComponent } from 'src/app/shared/components/spinner/spinner.component';
+import { AlarmService } from 'src/app/shared/services/alarm-service';
 import { LightService } from 'src/app/shared/services/light-service';
 import { MotionService } from 'src/app/shared/services/motion-service';
 import { CameraService } from 'src/app/shared/services/camera-service';
@@ -25,6 +26,7 @@ export class CameraComponent {
   lightService = inject(LightService);
   motionService = inject(MotionService);
   cameraService = inject(CameraService);
+  alarmService = inject(AlarmService);
   streamLoaded = signal<boolean>(false);
 
   lightState = computed(() => this.lightService.lightValues().at(-1));
@@ -41,7 +43,9 @@ export class CameraComponent {
 
   detectionInfo = computed(() => this.cameraService.detectionInfo());
 
-  constructor() {}
+  alarmClass = computed(() =>
+    this.alarmService.alarmRinging() ? 'alarm-ringing' : 'alarm-inactive',
+  );
 
   onStreamLoad(): void {
     this.streamLoaded.set(true);
