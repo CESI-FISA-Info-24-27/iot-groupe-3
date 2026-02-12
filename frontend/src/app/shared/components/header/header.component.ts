@@ -1,19 +1,27 @@
 import { Component, inject, signal } from '@angular/core';
-import { IonHeader, IonToolbar } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonIcon } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { sunnyOutline, moonOutline } from 'ionicons/icons';
 import { StatusService } from '../../services/status-service';
 import { STATUS } from '../../models/status.model';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  imports: [IonHeader, IonToolbar],
+  imports: [IonHeader, IonToolbar, IonIcon],
 })
 export class HeaderComponent {
   statusService = inject(StatusService);
+  themeService = inject(ThemeService);
   status = this.statusService.status;
   showText = signal<boolean>(false);
   private timeoutId?: ReturnType<typeof setTimeout>;
+
+  constructor() {
+    addIcons({ sunnyOutline, moonOutline });
+  }
 
   toggleText(): void {
     this.showText.update((current) => !current);

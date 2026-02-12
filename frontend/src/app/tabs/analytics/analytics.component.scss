@@ -9,7 +9,7 @@
   @media (min-width: 768px) {
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 20px var(--shadow-color);
     }
   }
 }
@@ -45,7 +45,7 @@ table {
   margin: 8px;
   border-collapse: collapse;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px var(--shadow-color);
   overflow: hidden;
 
   @media (min-width: 768px) {
@@ -56,9 +56,9 @@ table {
 
 th,
 td {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: white;
-  background-color: rgba(40, 40, 40, 0.95);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  background-color: var(--bg-darker);
   padding: 10px 12px;
   text-align: left;
   font-size: 14px;
@@ -71,12 +71,12 @@ td {
 }
 
 th {
-  background: #393939;
+  background: var(--table-header-bg);
   font-weight: 700;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--table-header-text);
 
   @media (min-width: 768px) {
     font-size: 14px;
@@ -84,11 +84,11 @@ th {
 }
 
 tr:nth-child(even) td {
-  background-color: rgba(60, 60, 60, 0.95);
+  background-color: var(--table-row-alt);
 }
 
 tr:hover td {
-  background-color: rgba(80, 80, 80, 0.95);
+  background-color: var(--table-row-hover);
 }
 
 .ripple-parent {
@@ -102,9 +102,9 @@ tr:hover td {
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-secondary);
   letter-spacing: 0.3px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-color-alt);
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
@@ -129,7 +129,7 @@ tr:hover td {
   width: 100%;
   padding: 40px 20px;
   text-align: center;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   font-size: 14px;
 
   p {
