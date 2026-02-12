@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ValuePayload } from "../models/value-payload";
 import { io } from "../server";
+import { addToHistory } from "./history.controller";
 
 let averagePressure = NaN;
 let currentPressure = NaN;
@@ -77,5 +78,8 @@ export function updateCurrent(newValue: number) {
     value: currentPressure,
     timestamp: new Date(),
   };
+  
+  addToHistory("pressure", payload);
+  
   io.emit("pressure:current", payload);
 }

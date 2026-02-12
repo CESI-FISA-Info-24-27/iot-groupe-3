@@ -11,6 +11,7 @@ import { IonContent, IonRippleEffect } from '@ionic/angular/standalone';
 import { Chart, registerables } from 'chart.js';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
 import { ROOM_EVENT } from 'src/app/shared/models/events.model';
+import { BASE_BACKEND_URL } from 'src/app/shared/models/request-parameters.model';
 import {
   HumidityInfo,
   LightInfo,
@@ -448,10 +449,7 @@ export class AnalyticsComponent {
   }
 
   downloadCSV() {
-    this.downloadService.downloadFile(
-      'TEMP DATA',
-      'CESIGuard-data-export.csv',
-      'csv',
-    );
+    const url = `${BASE_BACKEND_URL}export/csv?hours=24`;
+    window.open(url, '_blank');
   }
 }
