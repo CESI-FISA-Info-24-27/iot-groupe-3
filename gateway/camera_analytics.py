@@ -225,8 +225,14 @@ def continuous_capture():
                     frame_cv = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                     
                     if frame_cv is not None:
+                        # Rotation de 90° dans le sens horaire (caméra montée de côté)
+                        frame_cv = cv2.rotate(frame_cv, cv2.ROTATE_90_CLOCKWISE)
+                        
+                        # Ré-encoder en JPEG pour le stream brut
+                        _, jpg_rotated = cv2.imencode('.jpg', frame_cv, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                        latest_frame = jpg_rotated.tobytes()
+                        
                         # Mettre à jour avec timestamp précis
-                        latest_frame = jpg
                         latest_frame_cv = frame_cv
                         last_update = time.time()
                         
