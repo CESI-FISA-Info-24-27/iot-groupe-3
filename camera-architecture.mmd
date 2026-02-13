@@ -1,0 +1,78 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2d1b4e', 'primaryTextColor': '#e0d0ff', 'primaryBorderColor': '#7b2fff', 'lineColor': '#7a6aaa', 'secondaryColor': '#2e1a00', 'tertiaryColor': '#1a1a2e', 'background': '#13111a', 'mainBkg': '#13111a', 'nodeBorder': '#7b2fff', 'clusterBkg': '#1a1530', 'clusterBorder': '#3a2a5e', 'titleColor': '#e0d0ff', 'edgeLabelBackground': '#1a1530', 'textColor': '#e0d0ff', 'fontSize': '20px'}}}%%
+flowchart TB
+    subgraph CAPTURE["CAPTURE"]
+        ESP_HW["ESP32-CAM AI-THINKER<br/>OV2640 + PSRAM"]
+        ESP_STREAM["HTTP :81 MJPEG<br/>WiFi 10.94.86.91"]
+    end
+
+    subgraph GATEWAY["RPI GATEWAY"]
+        RPI_CLIENT["HTTP Client<br/>Continuous Requests"]
+        RPI_SERVER["Flask :8888<br/>/stream /snapshot"]
+    end
+
+    subgraph SERVER["SERVER loicserre.freeboxos.fr"]
+        SERV_CLIENT["Flask Client<br/>localhost:9888"]
+        ROTATE["90 Rotation"]
+        DETECT["Face Detection<br/>Haar Cascade"]
+        LIGHT["Brightness > 120"]
+        BLUR["GDPR Blur<br/>Gaussian 99x99"]
+        R1["/stream raw"]
+        R2["/fast 50fps"]
+        R3["/complete blurred"]
+        R4["/annotated"]
+        CALC["Metrics:<br/>person_count<br/>occupancy_rate<br/>brightness<br/>light_on"]
+        SEND["POST :8081<br/>/camera/occupancy<br/>10s interval"]
+    end
+
+    subgraph DISTRIB["DISTRIBUTION"]
+        NGINX["Nginx Proxy<br/>HTTPS/WSS"]
+        BACKEND["Express API<br/>InfluxDB"]
+        FRONTEND["Ionic App<br/>Video + Dashboard"]
+    end
+
+    ESP_HW --> ESP_STREAM
+    RPI_CLIENT --> RPI_SERVER
+    SERV_CLIENT --> ROTATE
+    ROTATE --> DETECT & LIGHT & R1 & R2
+    DETECT --> BLUR & CALC
+    LIGHT --> CALC
+    BLUR --> R3 & R4
+    CALC --> SEND
+    ESP_STREAM == WiFi ==> RPI_CLIENT
+    RPI_SERVER == Internet ==> TUNNEL["SSH TUNNEL<br/>9888:8888<br/>AES"]
+    TUNNEL == Local ==> SERV_CLIENT
+    R1 --> NGINX
+    R3 --> NGINX
+    SEND --> BACKEND
+    NGINX --> FRONTEND
+    BACKEND --> FRONTEND
+    FRONTEND ==> USER["USER"]
+
+    ESP_HW:::capture
+    ESP_STREAM:::capture
+    RPI_CLIENT:::gateway
+    RPI_SERVER:::gateway
+    SERV_CLIENT:::processing
+    ROTATE:::processing
+    DETECT:::processing
+    LIGHT:::processing
+    BLUR:::processing
+    R1:::api
+    R2:::api
+    R3:::api
+    R4:::api
+    CALC:::processing
+    SEND:::api
+    NGINX:::web
+    BACKEND:::api
+    FRONTEND:::web
+    TUNNEL:::tunnel
+    USER:::user
+
+    classDef capture fill:#2e1a00,stroke:#ff8c00,stroke-width:2px,color:#ffd580
+    classDef gateway fill:#1a2a3e,stroke:#4a90d9,stroke-width:2px,color:#a0d0ff
+    classDef tunnel fill:#1a1a2e,stroke:#7a6aaa,stroke-width:3px,color:#e0d0ff
+    classDef processing fill:#2d1b4e,stroke:#7b2fff,stroke-width:2px,color:#d9b3ff
+    classDef api fill:#1a2e1a,stroke:#4dff8c,stroke-width:2px,color:#b3ffd5
+    classDef web fill:#2e0a1a,stroke:#ff4d8f,stroke-width:2px,color:#ffb3d1
+    classDef user fill:#2d1b4e,stroke:#7b2fff,stroke-width:2px,color:#d9b3ff

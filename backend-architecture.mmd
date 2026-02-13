@@ -1,0 +1,52 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2d1b4e', 'primaryTextColor': '#e0d0ff', 'primaryBorderColor': '#7b2fff', 'lineColor': '#7a6aaa', 'secondaryColor': '#2e1a00', 'tertiaryColor': '#1a1a2e', 'background': '#13111a', 'mainBkg': '#13111a', 'nodeBorder': '#7b2fff', 'clusterBkg': '#1a1530', 'clusterBorder': '#3a2a5e', 'titleColor': '#e0d0ff', 'edgeLabelBackground': '#1a1530', 'textColor': '#e0d0ff', 'fontSize': '20px'}}}%%
+flowchart LR
+    subgraph MQTT["MQTT · IoT"]
+        direction TB
+        Broker["Mosquitto Broker<br/><i>WebSocket · Port 9001<br/>capteurs/* · alarme/*</i>"]
+        MQTTSvc["MQTT Service<br/><i>subscribe capteurs/+ alarme/+<br/>dispatch by topic</i>"]
+    end
+
+    subgraph Controllers["Controllers"]
+        direction TB
+        Sensors["Sensors<br/><i>Temperature · Humidity · Pressure<br/>Sound · Light · Motion</i>"]
+        Derived["Business Logic<br/><i>Alarm · ThermalComfort<br/>WasteAlert · Camera</i>"]
+    end
+
+    subgraph Data["Storage"]
+        direction TB
+        Influx["InfluxDB 3<br/><i>camera time-series<br/>bucket sensors</i>"]
+        History["In-Memory History<br/><i>max 10 000 per sensor</i>"]
+    end
+
+    subgraph API["API · Output"]
+        direction TB
+        SocketIO["Socket.IO Server<br/><i>real-time push</i>"]
+        REST["REST API Express<br/><i>CORS · Swagger · Port 3000</i>"]
+        Export["CSV Export<br/><i>merged history<br/>FR date format</i>"]
+    end
+
+    Broker --> MQTTSvc
+    Derived -.->|"alarm:toggle"| Broker
+
+    MQTTSvc --> Sensors
+    MQTTSvc --> Derived
+
+    Sensors -->|"emit()"| SocketIO
+    Derived -->|"emit()"| SocketIO
+
+    Sensors --> REST
+    Derived --> REST
+
+    Derived --> Influx
+    Sensors --> History
+    History --> Export
+
+    classDef iot fill:#2d1b4e,stroke:#7b2fff,stroke-width:2px,color:#d9b3ff
+    classDef ctrl fill:#2e1a00,stroke:#ff8c00,stroke-width:2px,color:#ffd580
+    classDef storage fill:#2e0a1a,stroke:#ff4d8f,stroke-width:2px,color:#ffb3d1
+    classDef api fill:#1a2a3e,stroke:#4a90d9,stroke-width:2px,color:#a0d0ff
+
+    class Broker,MQTTSvc iot
+    class Sensors,Derived ctrl
+    class Influx,History storage
+    class SocketIO,REST,Export api

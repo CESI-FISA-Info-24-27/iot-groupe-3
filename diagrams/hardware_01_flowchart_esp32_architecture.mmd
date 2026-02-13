@@ -1,0 +1,82 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2d1b4e', 'primaryTextColor': '#e0d0ff', 'primaryBorderColor': '#7b2fff', 'lineColor': '#7a6aaa', 'secondaryColor': '#2e1a00', 'tertiaryColor': '#1a1a2e', 'background': '#13111a', 'mainBkg': '#13111a', 'nodeBorder': '#7b2fff', 'clusterBkg': '#1a1530', 'clusterBorder': '#3a2a5e', 'titleColor': '#e0d0ff', 'edgeLabelBackground': '#1a1530', 'textColor': '#e0d0ff', 'fontSize': '20px'}}}%%
+flowchart TB
+    subgraph Alim["Power Supply"]
+        direction TB
+        USB["USB / Mains"]
+    end
+
+    ESP32["ESP32 WROOM<br/><i>Main Microcontroller</i>"]
+
+    subgraph Distrib["Power Distribution"]
+        direction TB
+        YCABLE["Y-Cable 3 to 1<br/><i>to 3.3V Pin</i>"]
+        subgraph Bread["Breadboard"]
+            direction LR
+            RAIL5V["Rail +5V"]
+            RAILGND["Common GND Rail"]
+        end
+    end
+
+    subgraph P3V["3.3V Peripherals"]
+        direction LR
+        subgraph S3V["3.3V Sensors"]
+            direction TB
+            BMP["BMP280 Adafruit<br/><i>Temperature · Pressure<br/>I2C : SCK=GPIO22 · SDI=GPIO21</i>"]
+            MIC["MAX4466<br/><i>Sound Sensor<br/>OUT=GPIO36</i>"]
+        end
+        subgraph A3V["3.3V Actuator"]
+            direction TB
+            SPK["Speaker V2 MonkMakes<br/><i>Audio Speaker<br/>LINE=GPIO27</i>"]
+        end
+    end
+
+    subgraph S5V["5V Sensors"]
+        direction TB
+        PIR["SBC-PIR<br/><i>Motion Detector<br/>SIG=GPIO39</i>"]
+        CAM["ESP32 CAM<br/><i>Camera</i>"]
+    end
+
+    subgraph Ultra["HC-SR04 Ultrasonic"]
+        direction TB
+        HC["HC-SR04<br/><i>TRIG=GPIO5</i>"]
+        PONT["Voltage Divider<br/><i>R1 : 330 Ohm in series<br/>R2 : 470 Ohm to GND<br/>Signal attenuated 5V to 3.3V<br/>Output to GPIO18</i>"]
+    end
+
+    USB --> ESP32
+
+    ESP32 -->|"5V Pin"| RAIL5V
+    ESP32 -->|"GND Pin"| RAILGND
+    ESP32 -->|"3.3V Pin"| YCABLE
+
+    YCABLE --> BMP
+    YCABLE --> MIC
+    YCABLE --> SPK
+
+    RAIL5V --> HC
+    RAIL5V --> PIR
+    RAIL5V --> CAM
+
+    ESP32 -->|"GPIO5"| HC
+    HC -->|"ECHO 5V"| PONT
+    PONT -.->|"3.3V Signal<br/>GPIO18"| ESP32
+
+    BMP -->|"GND"| RAILGND
+    MIC -->|"GND"| RAILGND
+    SPK -->|"GND"| RAILGND
+    PIR -->|"GND"| RAILGND
+    CAM -->|"GND"| RAILGND
+    HC -->|"GND"| RAILGND
+    PONT -->|"R2 GND"| RAILGND
+
+    classDef mcu fill:#2d1b4e,stroke:#7b2fff,stroke-width:2px,color:#d9b3ff
+    classDef distrib fill:#1a2a3e,stroke:#4a90d9,stroke-width:2px,color:#a0d0ff
+    classDef sensor5v fill:#2e1a00,stroke:#ff8c00,stroke-width:2px,color:#ffd580
+    classDef sensor3v fill:#2e0a1a,stroke:#ff4d8f,stroke-width:2px,color:#ffb3d1
+    classDef actneur fill:#1a2e1a,stroke:#4dff8c,stroke-width:2px,color:#b3ffd5
+
+    class ESP32,USB mcu
+    class YCABLE,RAIL5V,RAILGND distrib
+    class PIR,CAM,HC sensor5v
+    class BMP,MIC sensor3v
+    class PONT sensor3v
+    class SPK actneur

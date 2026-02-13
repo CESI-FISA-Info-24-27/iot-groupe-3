@@ -1,0 +1,50 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2d1b4e', 'primaryTextColor': '#e0d0ff', 'primaryBorderColor': '#7b2fff', 'lineColor': '#7a6aaa', 'secondaryColor': '#2e1a00', 'tertiaryColor': '#1a1a2e', 'background': '#13111a', 'mainBkg': '#13111a', 'nodeBorder': '#7b2fff', 'clusterBkg': '#1a1530', 'clusterBorder': '#3a2a5e', 'titleColor': '#e0d0ff', 'edgeLabelBackground': '#1a1530', 'textColor': '#e0d0ff'}}}%%
+flowchart LR
+    subgraph Backend["Backend Express"]
+        direction TB
+        WSServer["Socket.io Server"]
+        API["REST API<br/><i>Swagger /api-docs</i>"]
+        Stream["MJPEG Stream"]
+    end
+
+    subgraph Comm["Communication"]
+        direction TB
+        WS["WebSocket<br/><i>real-time events</i>"]
+        HTTP["HTTP Client<br/><i>polling + actions</i>"]
+    end
+
+    subgraph State["State — Angular Signals"]
+        direction TB
+        SensorSvc["Sensor Services<br/><i>Temperature · Humidity<br/>Pressure · Sound · Motion</i>"]
+        AppSvc["Business Services<br/><i>Alarm · ThermalComfort<br/>WasteAlert · Camera</i>"]
+        UISvc["UI Services<br/><i>Theme · Status</i>"]
+    end
+
+    subgraph UI["Standalone Components"]
+        direction TB
+        Pages["Pages<br/><i>Dashboard · Camera<br/>Analytics · Alerts</i>"]
+        Shared["Shared Components<br/><i>Header · Spinner · Charts</i>"]
+    end
+
+    WSServer --> WS
+    API --> HTTP
+    Stream --> Pages
+
+    WS --> SensorSvc
+    WS --> AppSvc
+    HTTP --> AppSvc
+    HTTP --> UISvc
+
+    SensorSvc -->|"signal()"| Pages
+    AppSvc -->|"computed()"| Pages
+    UISvc -->|"computed()"| Shared
+
+    classDef backend fill:#2d1b4e,stroke:#7b2fff,stroke-width:2px,color:#d9b3ff
+    classDef comm fill:#1a2a3e,stroke:#4a90d9,stroke-width:2px,color:#a0d0ff
+    classDef state fill:#2e1a00,stroke:#ff8c00,stroke-width:2px,color:#ffd580
+    classDef ui fill:#2e0a1a,stroke:#ff4d8f,stroke-width:2px,color:#ffb3d1
+
+    class WSServer,API,Stream backend
+    class WS,HTTP comm
+    class SensorSvc,AppSvc,UISvc state
+    class Pages,Shared ui
