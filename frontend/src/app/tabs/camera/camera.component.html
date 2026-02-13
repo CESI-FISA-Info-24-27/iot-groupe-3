@@ -83,6 +83,17 @@
             }}
           </div>
         </div>
+                        <div class="alarm-container" [class.pending]="alarmService.alarmRinging() === null">
+          <div [class]="alarmClass()">
+            {{
+              alarmService.alarmRinging() === null
+                ? "Alarme en chargement..."
+                : alarmService.alarmRinging()
+                  ? "Alarme en cours !"
+                  : "Alarme inactive"
+            }}
+          </div>
+      </div>
       </div>
     }
   </div>
