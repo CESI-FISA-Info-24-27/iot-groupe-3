@@ -117,7 +117,7 @@ export function connectToMQTT() {
             console.log(`Updated alarm mode: ${value ? "ACTIVE" : "INACTIVE"}`);
           }
           break;
-        case "surveillance/alarme_sonne":
+        case "alarme/sonne":
           if (typeof value === "boolean") {
             alarmController.updateRinging(value);
             console.log(
