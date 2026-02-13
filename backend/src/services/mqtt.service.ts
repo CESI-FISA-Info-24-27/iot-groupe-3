@@ -10,9 +10,10 @@ import * as thermalComfortController from "../controllers/thermal-comfort.contro
 import * as wasteAlertController from "../controllers/waste-alert.controller";
 
 const MQTT_BROKER_URL =
-  process.env.NODE_ENV === "production"
-    ? "ws://localhost:9001"
-    : "ws://loicserre.freeboxos.fr:9001";
+  process.env.MQTT_BROKER_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "ws://ecoguard-mqtt:9001"
+    : "ws://loicserre.freeboxos.fr:9001");
 
 export function connectToMQTT() {
   console.log(`Connecting to MQTT broker at ${MQTT_BROKER_URL}...`);
@@ -119,7 +120,9 @@ export function connectToMQTT() {
         case "surveillance/alarme_sonne":
           if (typeof value === "boolean") {
             alarmController.updateRinging(value);
-            console.log(`Updated alarm ringing: ${value ? "RINGING" : "SILENT"}`);
+            console.log(
+              `Updated alarm ringing: ${value ? "RINGING" : "SILENT"}`,
+            );
           }
           break;
         default:

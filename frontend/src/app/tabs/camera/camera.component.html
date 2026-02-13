@@ -1,7 +1,8 @@
 <app-header />
-
-<ion-content class="ion-padding">
-  <div class="camera-container">
+<div id="header-anchor"></div>
+<ion-content>
+  <div class="flex-col-center">
+    <div class="container camera-container">
     @if (!streamLoaded()) {
       <app-spinner message="Chargement de la caméra..." />
     } @else {
@@ -96,5 +97,6 @@
       </div>
       </div>
     }
+    </div>
   </div>
 </ion-content>
