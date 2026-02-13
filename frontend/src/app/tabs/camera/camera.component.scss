@@ -40,7 +40,8 @@
 }
 
 .motion-container,
-.light-container {
+.light-container,
+.alarm-container {
   @include flex-center;
   @include dark-card;
   text-align: center;
@@ -96,14 +97,38 @@
   background-size: 100% 300%;
 }
 
+.alarm-container::before {
+  background: linear-gradient(180deg, $main-orange, $main-red, $main-orange);
+  background-size: 100% 300%;
+}
+
 .no-motion,
-.light-off {
+.light-off,
+.alarm-inactive {
   @include red-hue;
 }
 
 .motion,
 .light-on {
   @include blue-green-hue;
+}
+
+.alarm-ringing {
+  @include orange-red-hue;
+}
+
+@keyframes alarm-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba($main-red, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 12px 4px rgba($main-red, 0.2);
+  }
+}
+
+.alarm-container:has(.alarm-ringing) {
+  animation: alarm-pulse 2s ease-in-out infinite;
 }
 
 @keyframes gradient-slide-vertical {
@@ -120,14 +145,16 @@
   width: 100%;
   margin-top: 16px;
   margin-bottom: 12px;
+
+  @media (min-width: 768px) {
+    max-width: 500px;
+  }
 }
 
 .detection-card {
-  background-color: rgba(50, 50, 50);
-  border-radius: 12px;
+  @include dark-card;
   padding: 16px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-color);
 }
 
 .detection-title {
@@ -137,7 +164,7 @@
   text-align: center;
   position: relative;
   padding-bottom: 12px;
-  color: white;
+  color: var(--text-primary);
 
   &::after {
     content: "";
@@ -170,20 +197,20 @@
   flex-direction: column;
   gap: 6px;
   padding: 12px;
-  background: rgba(30, 30, 30, 0.6);
+  background: var(--bg-darker);
   border-radius: 8px;
   text-align: center;
   transition: transform 0.2s ease, background 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
-    background: rgba(30, 30, 30, 0.8);
+    background: var(--bg-darkest);
   }
 }
 
 .detection-label {
   font-size: 0.75em;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-label);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -192,8 +219,8 @@
 .detection-value {
   font-size: 1.1em;
   font-weight: 700;
-  color: #fff;
-  
+  color: var(--text-primary);
+
   &.highlight {
     @include blue-green-hue;
     font-size: 1.3em;
@@ -216,7 +243,7 @@
 .section-title {
   font-size: 1.1em;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-primary);
   text-align: center;
   margin-bottom: 12px;
 }
