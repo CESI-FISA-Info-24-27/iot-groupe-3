@@ -1,0 +1,93 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2d1b4e', 'primaryTextColor': '#e0d0ff', 'primaryBorderColor': '#7b2fff', 'lineColor': '#7a6aaa', 'secondaryColor': '#2e1a00', 'tertiaryColor': '#1a1a2e', 'background': '#13111a', 'mainBkg': '#13111a', 'nodeBorder': '#7b2fff', 'clusterBkg': '#1a1530', 'clusterBorder': '#3a2a5e', 'titleColor': '#e0d0ff', 'edgeLabelBackground': '#1a1530', 'textColor': '#e0d0ff', 'fontSize': '20px'}}}%%
+graph LR
+
+    subgraph SITE ["CLIENT SITE"]
+        direction TB
+        ESP32("ESP32")
+        ESPCAM("ESP32-CAM")
+
+        subgraph GATEWAY ["RPI Gateway"]
+            SCRIPT["Python Script"]
+            TUNNEL_CLIENT["SSH Client"]
+        end
+
+        ESP32 -.->|BLE| SCRIPT
+        ESPCAM -.->|WiFi| TUNNEL_CLIENT
+    end
+
+    TUNNEL_CLIENT <==>|SSH Tunnel| TUNNEL_SERVER
+
+    subgraph SERVER ["SERVER loicserre.freeboxos.fr"]
+        direction TB
+
+        TUNNEL_SERVER("SSH Server")
+
+        subgraph VIDEO_BOX ["Video"]
+            OPENCV["AI / OpenCV"]
+        end
+
+        subgraph APP_BOX ["Web & API"]
+            BACKEND["Backend API"]
+            FRONTEND["Frontend App"]
+        end
+
+        subgraph DATA_BOX ["Data"]
+            MQTT["MQTT Broker"]
+            TELEGRAF("Telegraf")
+            INFLUX[("InfluxDB")]
+        end
+
+        NGINX{"Nginx Proxy"}
+
+        TUNNEL_SERVER -->|Raw Stream| OPENCV
+        OPENCV -->|Processed Stream| NGINX
+
+        SCRIPT ==>|MQTT| MQTT
+        MQTT -->|Sub| TELEGRAF
+        TELEGRAF -->|Write| INFLUX
+        BACKEND <-->|R/W| INFLUX
+
+        BACKEND -.->|Listen| MQTT
+        NGINX -.->|WS Proxy| MQTT
+        NGINX -->|HTTP| FRONTEND
+        NGINX -->|HTTP| BACKEND
+    end
+
+    USER("USER")
+
+    USER ==>|HTTPS| NGINX
+    USER -.->|WSS| NGINX
+
+    subgraph LEGENDE ["FLOW LEGEND"]
+        direction LR
+        L1(Video / Infra):::leg_orange
+        L2(IoT Data):::leg_blue
+        L3(Real-time / WS):::leg_purple
+        L4(Web Access HTTPS):::leg_green
+    end
+
+    classDef iot fill:#1a2a3e,stroke:#4a90d9,stroke-width:2px,color:#a0d0ff
+    classDef infra fill:#2e1a00,stroke:#ff8c00,stroke-width:2px,color:#ffd580
+    classDef app fill:#2d1b4e,stroke:#7b2fff,stroke-width:2px,color:#d9b3ff
+    classDef proxy fill:#2e0a1a,stroke:#ff4d8f,stroke-width:2px,color:#ffb3d1
+    classDef user fill:#2d1b4e,stroke:#7b2fff,stroke-width:2px,color:#d9b3ff
+
+    class ESP32,ESPCAM,SCRIPT,TUNNEL_CLIENT,MQTT,TELEGRAF,INFLUX iot
+    class TUNNEL_SERVER,OPENCV infra
+    class BACKEND,FRONTEND app
+    class NGINX proxy
+    class USER user
+
+    classDef leg_orange fill:#2e1a00,stroke:#ff8c00,stroke-width:4px,color:#ffd580
+    classDef leg_blue fill:#1a2a3e,stroke:#4a90d9,stroke-width:4px,color:#a0d0ff
+    classDef leg_purple fill:#2d1b4e,stroke:#7b2fff,stroke-width:4px,color:#d9b3ff
+    classDef leg_green fill:#1a2e1a,stroke:#4dff8c,stroke-width:4px,color:#b3ffd5
+
+    linkStyle 0,1 stroke:#7a6aaa,stroke-width:2px,stroke-dasharray: 5 5
+    linkStyle 2 stroke:#ff8c00,stroke-width:5px
+    linkStyle 3,4 stroke:#ff8c00,stroke-width:3px
+    linkStyle 5,6,7,8 stroke:#4a90d9,stroke-width:3px
+    linkStyle 9,10 stroke:#7b2fff,stroke-width:3px
+    linkStyle 11,12 stroke:#7a6aaa,stroke-width:3px
+    linkStyle 13 stroke:#4dff8c,stroke-width:4px
+    linkStyle 14 stroke:#7b2fff,stroke-width:4px

@@ -1,0 +1,52 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2d1b4e', 'primaryTextColor': '#e0d0ff', 'primaryBorderColor': '#7b2fff', 'lineColor': '#7a6aaa', 'secondaryColor': '#2e1a00', 'tertiaryColor': '#1a1a2e', 'background': '#13111a', 'mainBkg': '#13111a', 'nodeBorder': '#7b2fff', 'clusterBkg': '#1a1530', 'clusterBorder': '#3a2a5e', 'titleColor': '#e0d0ff', 'edgeLabelBackground': '#1a1530', 'textColor': '#e0d0ff', 'fontSize': '20px'}}}%%
+flowchart TB
+    subgraph Clients["Clients"]
+        FE["🌐 Frontend"]
+        ESP["📡 ESP32"]
+    end
+
+    subgraph Server["Backend · Express.js :3000"]
+        REST["🔌 API REST"]
+        WS["⚡ Socket.IO"]
+        MQTT_SVC["📨 Service MQTT"]
+
+        subgraph Controllers["Contrôleurs"]
+            SENS["🌡️ Capteurs<br/>Temp · Humidité · Pression<br/>Son · Lumière · Mouvement"]
+            FEAT["⚙️ Fonctionnalités<br/>Alarme · Confort Thermique<br/>Déchets · Caméra"]
+        end
+    end
+
+    subgraph Storage["Stockage"]
+        MEM["💾 Mémoire<br/>Historique capteurs"]
+        INFLUX["🗄️ InfluxDB<br/>Occupation caméra"]
+    end
+
+    BROKER["📡 Broker MQTT"]
+
+    ESP -->|"MQTT"| BROKER
+    BROKER -->|"Topics capteurs"| MQTT_SVC
+    MQTT_SVC --> SENS
+    MQTT_SVC --> FEAT
+
+    FE -->|"HTTP"| REST
+    FE <-->|"WebSocket"| WS
+
+    REST --> SENS
+    REST --> FEAT
+    SENS --> WS
+    FEAT --> WS
+
+    SENS --> MEM
+    FEAT --> INFLUX
+
+    classDef client fill:#2d1b4e,stroke:#7b2fff,stroke-width:2px,color:#d9b3ff
+    classDef api fill:#1a1a2e,stroke:#7b2fff,stroke-width:2px,color:#e0d0ff
+    classDef mqttnode fill:#2e1a00,stroke:#ff8c00,stroke-width:2px,color:#ffd580
+    classDef storage fill:#1a2e1a,stroke:#4dff8c,stroke-width:2px,color:#b3ffd5
+    classDef ctrl fill:#2e0a1a,stroke:#ff4d8f,stroke-width:2px,color:#ffb3d1
+
+    class FE,ESP client
+    class REST,WS api
+    class MQTT_SVC,BROKER mqttnode
+    class MEM,INFLUX storage
+    class SENS,FEAT ctrl

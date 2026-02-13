@@ -5,7 +5,13 @@
       "Bash(cd \"c:\\\\Users\\\\xavie\\\\OneDrive\\\\Documents\\\\CESI\\\\4e année\\\\iot\\\\iot-groupe-3\\\\frontend\\\\src\\\\app\"\" && find . -type f -name \"*.ts \")",
       "Bash(npx ng build:*)",
       "Bash(git checkout:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npx:*)",
+      "Bash(where:*)",
+      "Bash(Get-Command mmdc -ErrorAction SilentlyContinue)",
+      "Bash(node_modules.binmmdc --version)",
+      "Bash(cd:*)",
+      "Bash(grep:*)"
     ]
   }
 }
