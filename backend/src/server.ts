@@ -15,7 +15,12 @@ const httpServer = http.createServer(app);
 
 export const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:8100",
+    origin: process.env.FRONTEND_URL || [
+      "http://localhost:8100",
+      "http://localhost:4200",
+      "https://cesiguard.fr",
+      "https://cesiguard.loicserre.fr"
+    ],
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true,
