@@ -145,6 +145,11 @@ jobs:
               --security-opt apparmor=unconfined \
               -p 8081:3000 \
               --network ecoguard-network \
+              -e NODE_ENV=production \
+              -e INFLUX_URL=http://ecoguard-influxdb:8181 \
+              -e INFLUX_TOKEN=none \
+              -e INFLUX_ORG=ecoguard \
+              -e INFLUX_BUCKET=sensors \
               ecoguard-backend:latest
             
             # Nettoyer les images non utilisées
