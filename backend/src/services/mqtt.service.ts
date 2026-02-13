@@ -130,18 +130,9 @@ export function connectToMQTT() {
     }
   });
 
-  // Mock sensors (not physically connected yet)
-  let mockTemperature = 22;
+  // Mock humidity sensor (not physically connected yet)
   let mockHumidity = 45;
   setInterval(() => {
-    mockTemperature += (Math.random() - 0.5) * 0.5;
-    mockTemperature = Math.max(18, Math.min(28, mockTemperature));
-    const temp = Math.round(mockTemperature * 10) / 10;
-
-    temperatureController.updateCurrent(temp);
-    temperatureController.updateAverage(temp);
-    latestTemperature = temp;
-
     mockHumidity += (Math.random() - 0.5) * 2;
     mockHumidity = Math.max(30, Math.min(70, mockHumidity));
     const hum = Math.round(mockHumidity * 10) / 10;
@@ -150,7 +141,9 @@ export function connectToMQTT() {
     humidityController.updateAverage(hum);
     latestHumidity = hum;
 
-    thermalComfortController.updateComfort(latestTemperature, latestHumidity);
+    if (!isNaN(latestTemperature)) {
+      thermalComfortController.updateComfort(latestTemperature, latestHumidity);
+    }
   }, 10000);
 
   client.on("error", (error) => {
