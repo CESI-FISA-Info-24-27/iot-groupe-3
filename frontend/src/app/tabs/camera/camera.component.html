@@ -73,17 +73,6 @@
             }}
           </div>
         </div>
-        <div class="light-container" [class.pending]="!lightState()">
-          <div [class]="lightClass()">
-            {{
-              !lightState()
-                ? "Lumière en chargement..."
-                : lightState()?.lightOn
-                  ? "Lumière allumée"
-                  : "Lumière éteinte"
-            }}
-          </div>
-        </div>
                         <div class="alarm-container" [class.pending]="alarmService.alarmRinging() === null">
           <div [class]="alarmClass()">
             {{
