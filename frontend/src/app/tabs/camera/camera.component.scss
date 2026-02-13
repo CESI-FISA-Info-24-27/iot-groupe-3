@@ -2,7 +2,6 @@
 
 .camera-container {
   @include flex-col-center;
-  height: 100%;
 
   img {
     @include gradient-border;
