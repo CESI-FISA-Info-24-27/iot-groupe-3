@@ -1,5 +1,5 @@
-import express from "express";
 import { InfluxDB, Point } from "@influxdata/influxdb-client";
+import express from "express";
 
 const router = express.Router();
 
@@ -13,6 +13,18 @@ const influxDB = new InfluxDB({ url: influxUrl, token: influxToken });
 const writeApi = influxDB.getWriteApi(influxOrg, influxBucket);
 const queryApi = influxDB.getQueryApi(influxOrg);
 
+// Stockage en mémoire des métriques caméra (fallback si InfluxDB indisponible)
+let latestCameraMetrics = {
+  person_count: 0,
+  face_count: 0,
+  light_on: false,
+  brightness: 0,
+  is_occupied: false,
+  confidence: 0,
+  occupancy_rate: 0,
+  timestamp: new Date().toISOString(),
+};
+
 /**
  * POST /camera/occupancy
  * Reçoit les métriques d'occupation de la caméra
@@ -25,27 +37,45 @@ router.post("/occupancy", async (req, res) => {
       return res.status(400).json({ error: "Missing metrics data" });
     }
 
-    // Créer un point InfluxDB
-    const point = new Point("room_occupancy")
-      .tag("room", "living_room") // À adapter selon votre config
-      .tag("camera", "esp32_cam_1")
-      .intField("person_count", metrics.person_count || 0)
-      .intField("face_count", metrics.face_count || 0)
-      .booleanField("is_occupied", metrics.is_occupied || false)
-      .booleanField("light_on", metrics.light_on || false)
-      .floatField("brightness", metrics.brightness || 0)
-      .floatField("confidence", metrics.confidence || 0)
-      .floatField("occupancy_rate", metrics.occupancy_rate || 0)
-      .timestamp(new Date(timestamp || Date.now()));
+    // Mettre à jour les métriques en mémoire
+    latestCameraMetrics = {
+      person_count: metrics.person_count || 0,
+      face_count: metrics.face_count || 0,
+      is_occupied: metrics.is_occupied || false,
+      light_on: metrics.light_on || false,
+      brightness: metrics.brightness || 0,
+      confidence: metrics.confidence || 0,
+      occupancy_rate: metrics.occupancy_rate || 0,
+      timestamp: timestamp || new Date().toISOString(),
+    };
 
-    // Écrire dans InfluxDB
-    writeApi.writePoint(point);
-    await writeApi.flush();
+    // Essayer d'écrire dans InfluxDB (optionnel, ne bloque pas si erreur)
+    try {
+      const point = new Point("room_occupancy")
+        .tag("room", "living_room")
+        .tag("camera", "esp32_cam_1")
+        .intField("person_count", latestCameraMetrics.person_count)
+        .intField("face_count", latestCameraMetrics.face_count)
+        .booleanField("is_occupied", latestCameraMetrics.is_occupied)
+        .booleanField("light_on", latestCameraMetrics.light_on)
+        .floatField("brightness", latestCameraMetrics.brightness)
+        .floatField("confidence", latestCameraMetrics.confidence)
+        .floatField("occupancy_rate", latestCameraMetrics.occupancy_rate)
+        .timestamp(new Date(timestamp || Date.now()));
+
+      writeApi.writePoint(point);
+      await writeApi.flush();
+    } catch (influxError) {
+      console.warn(
+        "InfluxDB write failed (using in-memory storage):",
+        influxError instanceof Error ? influxError.message : influxError,
+      );
+    }
 
     res.json({
       status: "ok",
       message: "Metrics stored successfully",
-      timestamp: timestamp,
+      timestamp: latestCameraMetrics.timestamp,
     });
   } catch (error) {
     console.error("Error storing camera metrics:", error);
@@ -200,50 +230,16 @@ router.get("/occupancy/stats", async (req, res) => {
  */
 router.get("/detection", async (req, res) => {
   try {
-    const query = `
-      from(bucket: "${influxBucket}")
-        |> range(start: -1m)
-        |> filter(fn: (r) => r["_measurement"] == "room_occupancy")
-        |> last()
-    `;
-
-    const result: any = {
-      person_count: 0,
-      face_count: 0,
-      light_on: false,
-      brightness: 0,
-      is_occupied: false,
-      confidence: 0,
-      occupancy_rate: 0,
-      timestamp: new Date().toISOString(),
-    };
-
-    const data = await queryApi.collectRows(query);
-
-    data.forEach((row: any) => {
-      result[row._field] = row._value;
-      result.timestamp = row._time;
-    });
-
+    // Retourner les métriques en mémoire (temps réel depuis camera_analytics)
     res.json({
       status: "ok",
-      detection: result,
+      detection: latestCameraMetrics,
     });
   } catch (error) {
-    console.error("Error querying detection data:", error);
-    // Retourner des données par défaut (zéro) quand InfluxDB n'a pas encore de données
-    res.json({
-      status: "ok",
-      detection: {
-        person_count: 0,
-        face_count: 0,
-        light_on: false,
-        brightness: 0,
-        is_occupied: false,
-        confidence: 0,
-        occupancy_rate: 0,
-        timestamp: new Date().toISOString(),
-      },
+    console.error("Error getting detection data:", error);
+    res.status(500).json({
+      error: "Failed to get detection data",
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
