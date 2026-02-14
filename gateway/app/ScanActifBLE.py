@@ -19,7 +19,7 @@ CHAR_MAP = {
     "67eec361-5161-489a-8492-ec27b8c7731e": ("Distance", "cm", "capteurs/distance", "float32"),
     "7a1d01a8-0234-4087-bc1d-077368a51172": ("Présence", "Détecté/Absent", "capteurs/presence", "boolean"),
     "65fd3587-3516-4af9-8f30-160c005f1170": ("Alarme", "Activée/Désactivée", "surveillance/alarme", "boolean"),
-    "f93c7fe3-5f42-4556-9110-6afc288afdc1": ("Alarme Sonne", "Activée/Désactivée", "surveillance/alarme_sonne", "boolean"),
+    "f93c7fe3-5f42-4556-9110-6afc288afdc1": ("Alarme Sonne", "Activée/Désactivée", "alarme/sonne", "boolean"),
 }
 
 # Caractéristiques d'écriture pour les commandes (UUIDs à adapter)
